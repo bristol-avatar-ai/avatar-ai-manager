@@ -1,0 +1,59 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">AI Avatar Manager</string>
+    <!--Fragment Labels-->
+    <string name="exhibition_list_fragment_label">Exhibition List</string>
+    <string name="path_list_fragment_label">Path List</string>
+    <string name="edit_anchor_fragment_label">Edit Anchor</string>
+    <string name="edit_exhibition_fragment_label">Edit Exhibition</string>
+    <string name="add_anchor_fragment_label">Add Anchor</string>
+    <string name="add_exhibition_fragment_label">Add Exhibition</string>
+    <!--Loading Screen Fragment-->
+    <string name="message_loading" tools:ignore="TypographyEllipsis">Loading...\n</string>
+    <string name="title_network_error">Network Error</string>
+    <string name="message_network_error">Failed to download database. Please check your network connection and restart the app.</string>
+    <string name="button_network_error">OK</string>
+    <!--Anchor List Fragment-->
+    <string name="title_anchor_list">Cloud Anchors</string>
+    <string name="header_anchor_id">Anchor ID</string>
+    <string name="header_description">Description</string>
+    <string name="button_add_anchor">Add Anchor</string>
+    <string name="button_upload_database">Upload Database</string>
+    <string name="message_upload_database">The current database will be uploaded to the server.</string>
+    <string name="button_continue">Continue</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="message_upload_success">Upload Success</string>
+    <string name="message_upload_failure">Upload Failed</string>
+    <!--Exhibition List Fragment-->
+    <string name="title_exhibition_list">Anchor: %s</string>
+    <string name="header_exhibition_name">Name</string>
+    <string name="header_exhibition_description">Description</string>
+    <string name="button_paths">Paths</string>
+    <string name="button_add_exhibition">Add Exhibition</string>
+    <!--Path List Fragment-->
+    <string name="title_path_list">Anchor: %s</string>
+    <string name="header_path_destination">Destination</string>
+    <string name="header_path_distance">Distance</string>
+    <string name="button_exhibitions">Exhibitions</string>
+    <string name="button_add_path">Add Path</string>
+    <!--Edit Fragment-->
+    <string name="title_anchor_id">Anchor: %s</string>
+    <string name="title_exhibition_name">Exhibition: %s</string>
+    <string name="field_description">Description</string>
+    <string name="button_amend">Amend</string>
+    <string name="button_delete">Delete</string>
+    <string name="message_description_amended">Description Amended</string>
+    <string name="message_anchor_deleted">Anchor Deleted</string>
+    <string name="message_exhibition_deleted">Exhibition Deleted</string>
+    <!-- Add Exhibition Fragment -->
+    <string name="field_name">Name</string>
+    <string name="button_add">Add</string>
+    <string name="button_discard">Discard</string>
+    <string name="message_exhibition_added">Exhibition Added</string>
+    <string name="message_exhibition_discarded">Exhibition Discarded</string>
+    <!-- Add Anchor Fragment -->
+    <string name="button_host">Host</string>
+    <string name="button_summon_avatar">Summon Avatar</string>
+    <string name="button_place_avatar">Place Avatar</string>
+    <string name="message_anchor_added">Anchor Added: %s</string>
+    <string name="message_anchor_failed">Failed To Add Anchor</string>
+</resources>

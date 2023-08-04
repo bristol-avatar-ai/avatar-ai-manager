@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/column_1"
+        style="@style/Widget.List.ListItemTextView"
+        android:layout_marginHorizontal="@dimen/margin_between_elements"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/column_2"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="J83BD74KS4E7F3E5C7" />
+
+    <TextView
+        android:id="@+id/column_2"
+        style="@style/Widget.List.ListItemTextView"
+        android:layout_below="@id/column_1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/margin_between_elements"
+        android:fontFamily="sans-serif"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/column_1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Next to the printer." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

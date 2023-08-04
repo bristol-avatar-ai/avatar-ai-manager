@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/loadingScreenFragment">
+
+    <fragment
+        android:id="@+id/anchorListFragment"
+        android:name="com.example.ai_avatar_manager.fragment.list.AnchorListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_anchorListFragment_to_exhibitionListFragment"
+            app:destination="@id/exhibitionListFragment" />
+        <action
+            android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
+            app:destination="@id/editAnchorFragment" />
+        <action
+            android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
+            app:destination="@id/addAnchorFragment" />
+        <action
+            android:id="@+id/action_anchorListFragment_to_loadingScreenFragment"
+            app:destination="@id/loadingScreenFragment"
+            app:popUpTo="@id/loadingScreenFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/exhibitionListFragment"
+        android:name="com.example.ai_avatar_manager.fragment.list.ExhibitionListFragment"
+        android:label="@string/exhibition_list_fragment_label">
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_exhibitionListFragment_to_pathListFragment"
+            app:destination="@id/pathListFragment"
+            app:popUpTo="@id/anchorListFragment" />
+        <action
+            android:id="@+id/action_exhibitionListFragment_to_editExhibitionFragment"
+            app:destination="@id/editExhibitionFragment" />
+        <action
+            android:id="@+id/action_exhibitionListFragment_to_addExhibitionFragment"
+            app:destination="@id/addExhibitionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pathListFragment"
+        android:name="com.example.ai_avatar_manager.fragment.list.PathListFragment"
+        android:label="@string/path_list_fragment_label">
+        <action
+            android:id="@+id/action_pathListFragment_to_exhibitionListFragment"
+            app:destination="@id/exhibitionListFragment"
+            app:popUpTo="@id/anchorListFragment" />
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/editAnchorFragment"
+        android:name="com.example.ai_avatar_manager.fragment.edit.EditAnchorFragment"
+        android:label="@string/edit_anchor_fragment_label">
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingScreenFragment"
+        android:name="com.example.ai_avatar_manager.fragment.LoadingScreenFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_loading_screen">
+        <action
+            android:id="@+id/action_loadingScreenFragment_to_anchorListFragment"
+            app:destination="@id/anchorListFragment"
+            app:popUpTo="@id/loadingScreenFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/editExhibitionFragment"
+        android:name="com.example.ai_avatar_manager.fragment.edit.EditExhibitionFragment"
+        android:label="@string/edit_exhibition_fragment_label">
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+    <fragment
+        android:id="@+id/addExhibitionFragment"
+        android:name="com.example.ai_avatar_manager.fragment.add.AddExhibitionFragment"
+        android:label="@string/add_exhibition_fragment_label"
+        tools:layout="@layout/fragment_add_exhibition" >
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAnchorFragment"
+        android:name="com.example.ai_avatar_manager.fragment.add.AddArAnchorFragment"
+        android:label="@string/add_anchor_fragment_label">
+        <action
+            android:id="@+id/action_addAnchorFragment_to_editAnchorFragment"
+            app:destination="@id/editAnchorFragment"
+            app:popUpTo="@id/anchorListFragment" />
+    </fragment>
+</navigation>
