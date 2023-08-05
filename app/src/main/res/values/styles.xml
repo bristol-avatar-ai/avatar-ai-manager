@@ -17,6 +17,14 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
+    <style name="Widget.List.Button" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/margin_between_elements</item>
+        <item name="android:layout_marginBottom">@dimen/margin_between_elements</item>
+        <item name="android:tint">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="Widget.List.ListItemTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_width">0dp</item>

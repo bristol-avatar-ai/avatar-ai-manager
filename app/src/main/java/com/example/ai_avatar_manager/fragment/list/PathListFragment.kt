@@ -32,6 +32,17 @@ class PathListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
+    private val navigateToEditPathFragment =
+        { originId: String, destinationId: String, distance: Int ->
+            binding.root.findNavController().navigate(
+                PathListFragmentDirections.actionPathListFragmentToEditPathFragment(
+                    originId,
+                    destinationId,
+                    distance
+                )
+            )
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -53,6 +64,7 @@ class PathListFragment : Fragment() {
         setAdaptor()
         anchorId?.let {
             setExhibitionsButton(it)
+            setAddButton(it)
         }
     }
 
@@ -68,7 +80,7 @@ class PathListFragment : Fragment() {
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val pathListAdaptor = PathListAdaptor()
+        val pathListAdaptor = PathListAdaptor(navigateToEditPathFragment)
         recyclerView.adapter = pathListAdaptor
 
         lifecycleScope.launch(Dispatchers.Main) {
@@ -84,6 +96,16 @@ class PathListFragment : Fragment() {
         binding.button1.setOnClickListener {
             val action =
                 PathListFragmentDirections.actionPathListFragmentToExhibitionListFragment(anchorId)
+            binding.root.findNavController().navigate(action)
+        }
+    }
+
+    private fun setAddButton(anchorId: String) {
+        binding.button2.setOnClickListener {
+            val action =
+                PathListFragmentDirections.actionPathListFragmentToAddPathFragment(
+                    anchorId, null
+                )
             binding.root.findNavController().navigate(action)
         }
     }

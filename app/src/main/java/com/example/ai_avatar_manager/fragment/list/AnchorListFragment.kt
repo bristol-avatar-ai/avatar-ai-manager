@@ -2,6 +2,9 @@ package com.example.ai_avatar_manager.fragment.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -20,6 +23,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "AnchorListFragment"
 
+@Suppress("DEPRECATION")
 class AnchorListFragment : Fragment() {
 
     private var _binding: FragmentListBinding? = null
@@ -28,6 +32,21 @@ class AnchorListFragment : Fragment() {
     private val viewModel: DatabaseViewModel by activityViewModels()
 
     private lateinit var recyclerView: RecyclerView
+
+    private val navigateToExhibitionList = { anchorId: String ->
+        binding.root.findNavController().navigate(
+            AnchorListFragmentDirections.actionAnchorListFragmentToExhibitionListFragment(anchorId)
+        )
+    }
+
+    private val navigateToEditAnchor = { anchorId: String, description: String ->
+        binding.root.findNavController().navigate(
+            AnchorListFragmentDirections.actionAnchorListFragmentToEditAnchorFragment(
+                anchorId,
+                description
+            )
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,14 +59,18 @@ class AnchorListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Enable custom options menu.
+        setHasOptionsMenu(true)
         setLayoutText()
 
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        setAdaptor()
 
-        setAddAnchorButton()
-        setUploadButton()
+        val anchorListAdapter = AnchorListAdaptor(
+            navigateToExhibitionList, navigateToEditAnchor
+        )
+        recyclerView.adapter = anchorListAdapter
+        checkIfViewModelReady()
     }
 
     private fun setLayoutText() {
@@ -55,31 +78,23 @@ class AnchorListFragment : Fragment() {
         binding.header1.text = getString(R.string.header_anchor_id)
         binding.header2.text = getString(R.string.header_description)
         binding.button1.text = getString(R.string.button_add_anchor)
-        binding.button2.text = getString(R.string.button_upload_database)
+        binding.button2.text = getString(R.string.button_add_ar_anchor)
     }
 
-    private fun navigateToExhibitionList(anchorId: String) {
-        val action =
-            AnchorListFragmentDirections.actionAnchorListFragmentToExhibitionListFragment(anchorId)
-        binding.root.findNavController().navigate(action)
-    }
-
-    private fun navigateToEditAnchor(anchorId: String, description: String) {
-        val action =
-            AnchorListFragmentDirections.actionAnchorListFragmentToEditAnchorFragment(
-                anchorId,
-                description
+    private fun checkIfViewModelReady() {
+        if (!viewModel.isReady()) {
+            // Navigate to loading fragment if database is not ready.
+            binding.root.findNavController().navigate(
+                AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
             )
-        binding.root.findNavController().navigate(action)
+        } else {
+            submitAdaptorList()
+            setAddAnchorButton()
+            setAddArAnchorButton()
+        }
     }
 
-    private fun setAdaptor() {
-        val anchorListAdapter = AnchorListAdaptor(
-            ::navigateToExhibitionList,
-            ::navigateToEditAnchor
-        )
-        recyclerView.adapter = anchorListAdapter
-
+    private fun submitAdaptorList() {
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.getAnchors().collect {
                 (recyclerView.adapter as AnchorListAdaptor).submitList(it)
@@ -89,24 +104,53 @@ class AnchorListFragment : Fragment() {
 
     private fun setAddAnchorButton() {
         binding.button1.setOnClickListener {
-            val action =
-                AnchorListFragmentDirections.actionAnchorListFragmentToAddAnchorFragment()
-            binding.root.findNavController().navigate(action)
+            binding.root.findNavController()
+                .navigate(AnchorListFragmentDirections.actionAnchorListFragmentToAddAnchorFragment())
         }
     }
 
-    private fun setUploadButton() {
+    private fun setAddArAnchorButton() {
         binding.button2.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.button_upload_database))
-                .setMessage(getString(R.string.message_upload_database))
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.button_continue)) { _, _ ->
-                    uploadDatabase()
-                }
-                .setNegativeButton(getString(R.string.button_cancel)) { _, _ -> }
-                .show()
+            binding.root.findNavController()
+                .navigate(AnchorListFragmentDirections.actionAnchorListFragmentToAddArAnchorFragment())
         }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_upload -> {
+                item.isEnabled = false
+                uploadDatabaseConfirmation()
+                item.isEnabled = true
+                true
+            }
+
+            R.id.action_refresh -> {
+                refreshDatabase()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun uploadDatabaseConfirmation() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.button_upload_database))
+            .setMessage(getString(R.string.message_upload_database))
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.button_continue)) { _, _ ->
+                uploadDatabase()
+            }
+            .setNegativeButton(getString(R.string.button_cancel)) { _, _ -> }
+            .show()
     }
 
     private fun uploadDatabase() {
@@ -125,4 +169,13 @@ class AnchorListFragment : Fragment() {
 
         }
     }
+
+    private fun refreshDatabase() {
+        viewModel.close(requireContext())
+        // Navigate to the loading fragment.
+        binding.root.findNavController().navigate(
+            AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
+        )
+    }
+
 }
