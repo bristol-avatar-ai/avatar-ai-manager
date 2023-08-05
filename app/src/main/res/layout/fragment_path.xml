@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginHorizontal="@dimen/margin"
-    android:layout_marginTop="@dimen/margin"
-    tools:context=".fragment.add.AddExhibitionFragment">
+    android:layout_marginTop="@dimen/margin">
 
     <TextView
         android:id="@+id/title"
@@ -19,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/title_anchor_id" />
+        tools:text="@string/title_origin" />
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -36,66 +35,56 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon_name"
+                android:id="@+id/icon_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:importantForAccessibility="no"
+                app:layout_constraintBottom_toBottomOf="@+id/destination"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/name"
-                app:srcCompat="@drawable/ic_name" />
+                app:layout_constraintTop_toTopOf="@id/destination"
+                app:srcCompat="@drawable/ic_anchor" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/name"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/destination"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin"
-                android:hint="@string/field_name"
-                app:counterEnabled="true"
-                app:counterMaxLength="20"
-                app:layout_constraintBottom_toTopOf="@id/description"
+                android:layout_marginBottom="@dimen/margin_between_elements"
+                android:paddingVertical="14dp"
+                android:textAlignment="textStart"
+                app:layout_constraintBottom_toTopOf="@id/distance"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/icon_description"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords|textAutoCorrect"
-                    android:maxLength="20" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                app:layout_constraintStart_toEndOf="@id/icon_distance"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/button_select_destination" />
 
             <ImageView
-                android:id="@+id/icon_description"
+                android:id="@+id/icon_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:importantForAccessibility="no"
+                app:layout_constraintBottom_toBottomOf="@id/distance"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/description"
-                app:srcCompat="@drawable/ic_description" />
+                app:layout_constraintTop_toTopOf="@id/distance"
+                app:srcCompat="@drawable/ic_distance" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/description"
+                android:id="@+id/distance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin"
-                android:hint="@string/field_description"
-                app:counterEnabled="true"
-                app:counterMaxLength="200"
+                android:hint="@string/field_distance"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/icon_description"
-                app:layout_constraintTop_toBottomOf="@id/name">
+                app:layout_constraintStart_toEndOf="@id/icon_distance"
+                app:layout_constraintTop_toBottomOf="@id/destination">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/description_edit_text"
+                    android:id="@+id/distance_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
-                    android:maxLength="200" />
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,10 +96,10 @@
         android:id="@+id/button_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_add"
         app:layout_constraintBottom_toTopOf="@id/button_2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/button_add" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_2"
@@ -118,9 +107,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin"
         android:backgroundTint="?attr/colorPrimaryVariant"
-        android:text="@string/button_discard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/button_discard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

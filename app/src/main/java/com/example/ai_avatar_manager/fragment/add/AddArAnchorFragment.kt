@@ -200,7 +200,7 @@ class AddArAnchorFragment : Fragment() {
             viewModel.addAnchor(Anchor(anchorId, ""))
             viewModel.showMessage(
                 requireActivity(),
-                getString(R.string.message_anchor_added, anchorId)
+                getString(R.string.message_anchor_added)
             )
             navigateToEditAnchorFragment(anchorId)
         }

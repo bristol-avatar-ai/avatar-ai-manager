@@ -3,7 +3,7 @@
              xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/loadingScreenFragment">
+    app:startDestination="@id/anchorListFragment">
 
     <fragment
         android:id="@+id/anchorListFragment"
@@ -17,13 +17,16 @@
             android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment" />
         <action
+            android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
+            app:destination="@id/addArAnchorFragment" />
+        <action
+            android:id="@+id/action_anchorListFragment_to_loadingFragment"
+            app:destination="@id/loadingFragment"
+            app:popUpTo="@id/anchorListFragment"
+            app:popUpToInclusive="true" />
+        <action
             android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
-        <action
-            android:id="@+id/action_anchorListFragment_to_loadingScreenFragment"
-            app:destination="@id/loadingScreenFragment"
-            app:popUpTo="@id/loadingScreenFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/exhibitionListFragment"
@@ -54,6 +57,12 @@
         <argument
             android:name="anchorId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_pathListFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment" />
+        <action
+            android:id="@+id/action_pathListFragment_to_editPathFragment"
+            app:destination="@id/editPathFragment" />
     </fragment>
     <fragment
         android:id="@+id/editAnchorFragment"
@@ -66,17 +75,6 @@
             android:name="description"
             app:argType="string"
             android:defaultValue="" />
-    </fragment>
-    <fragment
-        android:id="@+id/loadingScreenFragment"
-        android:name="com.example.ai_avatar_manager.fragment.LoadingScreenFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_loading_screen">
-        <action
-            android:id="@+id/action_loadingScreenFragment_to_anchorListFragment"
-            app:destination="@id/anchorListFragment"
-            app:popUpTo="@id/loadingScreenFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/editExhibitionFragment"
@@ -94,18 +92,77 @@
         android:id="@+id/addExhibitionFragment"
         android:name="com.example.ai_avatar_manager.fragment.add.AddExhibitionFragment"
         android:label="@string/add_exhibition_fragment_label"
-        tools:layout="@layout/fragment_add_exhibition" >
+        tools:layout="@layout/fragment_add" >
         <argument
             android:name="anchorId"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/addAnchorFragment"
+        android:id="@+id/addArAnchorFragment"
         android:name="com.example.ai_avatar_manager.fragment.add.AddArAnchorFragment"
         android:label="@string/add_anchor_fragment_label">
         <action
             android:id="@+id/action_addAnchorFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment"
             app:popUpTo="@id/anchorListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.ai_avatar_manager.fragment.LoadingFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_loading" >
+        <action
+            android:id="@+id/action_loadingFragment_to_anchorListFragment"
+            app:destination="@id/anchorListFragment"
+            app:popUpTo="@id/loadingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAnchorFragment"
+        android:name="com.example.ai_avatar_manager.fragment.add.AddAnchorFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/addPathFragment"
+        android:name="com.example.ai_avatar_manager.fragment.add.AddPathFragment"
+        android:label="@string/add_path_fragment_label">
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="destinationId"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_addPathFragment_to_pathSelectionFragment"
+            app:destination="@id/pathSelectionFragment"
+            app:popUpTo="@id/addPathFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/pathSelectionFragment"
+        android:name="com.example.ai_avatar_manager.fragment.PathSelectionFragment"
+        android:label="@string/select_path_fragment_label">
+        <action
+            android:id="@+id/action_pathSelectionFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment"
+            app:popUpTo="@id/pathSelectionFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="originId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPathFragment"
+        android:name="com.example.ai_avatar_manager.fragment.edit.EditPathFragment"
+        android:label="@string/edit_path_fragment_label">
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="destinationId"
+            app:argType="string" />
+        <argument
+            android:name="distance"
+            app:argType="integer" />
     </fragment>
 </navigation>

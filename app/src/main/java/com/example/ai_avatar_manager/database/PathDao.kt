@@ -1,11 +1,9 @@
 package com.example.ai_avatar_manager.database
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,9 +17,9 @@ interface PathDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(path: Path)
 
-    @Update
-    suspend fun update(path: Path)
+    @Query("UPDATE path SET distance = :distance WHERE origin LIKE :origin AND destination LIKE :destination")
+    suspend fun update(origin: String, destination: String, distance: Int)
 
-    @Delete
-    suspend fun delete(path: Path)
+    @Query("DELETE FROM path WHERE origin LIKE :origin AND destination LIKE :destination")
+    suspend fun delete(origin: String, destination: String)
 }

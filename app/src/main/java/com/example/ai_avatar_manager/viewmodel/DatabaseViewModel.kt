@@ -49,9 +49,14 @@ class DatabaseViewModel : ViewModel() {
         }
     }
 
+    fun isReady(): Boolean {
+        return _database != null
+    }
+
     fun close(context: Context) {
-        _database?.close()
+        AppDatabase.close()
         _database = null
+        File(context.filesDir, AppDatabase.FILENAME).delete()
     }
 
     suspend fun uploadDatabase(context: Context): Boolean {
@@ -95,12 +100,25 @@ class DatabaseViewModel : ViewModel() {
         exhibitionDao.update(name, description)
     }
 
+    suspend fun addExhibition(exhibition: Exhibition) {
+        exhibitionDao.insert(exhibition)
+    }
+
     suspend fun deleteExhibition(name: String) {
         exhibitionDao.delete(name)
     }
 
-    suspend fun addExhibition(exhibition: Exhibition) {
-        exhibitionDao.insert(exhibition)
+    suspend fun updatePath(origin: String, destination: String, distance: Int) {
+        pathDao.update(origin, destination, distance)
     }
+
+    suspend fun addPath(path: Path) {
+        pathDao.insert(path)
+    }
+
+    suspend fun deletePath(origin: String, destination: String) {
+        pathDao.delete(origin, destination)
+    }
+
 
 }

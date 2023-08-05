@@ -9,31 +9,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.database.Exhibition
+import com.example.ai_avatar_manager.database.Anchor
 import com.example.ai_avatar_manager.databinding.FragmentAddBinding
 import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "AddExhibitionFragment"
+private const val TAG = "AddAnchorFragment"
 
-private const val ARG_ANCHOR_ID = "anchorId"
-
-class AddExhibitionFragment : Fragment() {
-
-    private var anchorId: String? = null
+class AddAnchorFragment : Fragment() {
 
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: DatabaseViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            anchorId = it.getString(ARG_ANCHOR_ID)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,12 +34,10 @@ class AddExhibitionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.title.text = getString(R.string.title_anchor_id, anchorId)
-        binding.icon1.setImageResource(R.drawable.ic_name)
-        binding.field1.hint = getString(R.string.field_name)
-        anchorId?.let {
-            setAddButton(it)
-        }
+        binding.title.text = getString(R.string.add_anchor_fragment_label)
+        binding.icon1.setImageResource(R.drawable.ic_anchor)
+        binding.field1.hint = getString(R.string.field_anchor_id)
+        setAddButton()
         setDiscardButton()
     }
 
@@ -64,27 +51,26 @@ class AddExhibitionFragment : Fragment() {
         binding.button2.isEnabled = false
     }
 
-    private fun setAddButton(anchorId: String) {
+    private fun setAddButton() {
         binding.button1.setOnClickListener() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
-                addExhibition(anchorId)
+                addAnchor()
                 enableButtons()
             }
         }
     }
 
-    private suspend fun addExhibition(anchorId: String) {
-        viewModel.addExhibition(
-            Exhibition(
+    private suspend fun addAnchor() {
+        viewModel.addAnchor(
+            Anchor(
                 binding.field1EditText.text.toString(),
-                anchorId,
                 binding.descriptionEditText.text.toString()
             )
         )
         viewModel.showMessage(
             requireActivity(),
-            getString(R.string.message_exhibition_added)
+            getString(R.string.message_anchor_added)
         )
         binding.field1EditText.text?.clear()
         binding.descriptionEditText.text?.clear()
@@ -95,7 +81,7 @@ class AddExhibitionFragment : Fragment() {
             lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.showMessage(
                     requireActivity(),
-                    getString(R.string.message_exhibition_discarded)
+                    getString(R.string.message_anchor_discarded)
                 )
                 findNavController().navigateUp()
             }
