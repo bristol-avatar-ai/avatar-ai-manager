@@ -2,6 +2,7 @@ package com.example.ai_avatar_manager.fragment.add
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -196,11 +197,18 @@ class AddArAnchorFragment : Fragment() {
     private fun addAnchorToDatabase(anchorId: String) {
         // Add anchor to database in IO thread.
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.addAnchor(com.example.avatar_ai_cloud_storage.database.Anchor(anchorId, ""))
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_anchor_added)
-            )
+            try {
+                viewModel.addAnchor(com.example.avatar_ai_cloud_storage.database.Anchor(anchorId, ""))
+                viewModel.showMessage(
+                    requireActivity(),
+                    getString(R.string.message_anchor_added)
+                )
+            } catch(e: SQLiteConstraintException) {
+                viewModel.showMessage(
+                    requireActivity(),
+                    getString(R.string.message_duplicate_error, anchorId)
+                )
+            }
             navigateToEditAnchorFragment(anchorId)
         }
     }

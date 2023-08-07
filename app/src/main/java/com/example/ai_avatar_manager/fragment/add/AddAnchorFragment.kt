@@ -1,5 +1,6 @@
 package com.example.ai_avatar_manager.fragment.add
 
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,18 +62,25 @@ class AddAnchorFragment : Fragment() {
     }
 
     private suspend fun addAnchor() {
-        viewModel.addAnchor(
-            com.example.avatar_ai_cloud_storage.database.Anchor(
-                binding.field1EditText.text.toString(),
-                binding.descriptionEditText.text.toString()
+        try {
+            viewModel.addAnchor(
+                com.example.avatar_ai_cloud_storage.database.Anchor(
+                    binding.field1EditText.text.toString(),
+                    binding.descriptionEditText.text.toString()
+                )
             )
-        )
-        viewModel.showMessage(
-            requireActivity(),
-            getString(R.string.message_anchor_added)
-        )
-        binding.field1EditText.text?.clear()
-        binding.descriptionEditText.text?.clear()
+            viewModel.showMessage(
+                requireActivity(),
+                getString(R.string.message_anchor_added)
+            )
+            binding.field1EditText.text?.clear()
+            binding.descriptionEditText.text?.clear()
+        } catch(e: SQLiteConstraintException) {
+            viewModel.showMessage(
+                requireActivity(),
+                getString(R.string.message_duplicate_error, binding.field1EditText.text.toString())
+            )
+        }
     }
 
     private fun setDiscardButton() {

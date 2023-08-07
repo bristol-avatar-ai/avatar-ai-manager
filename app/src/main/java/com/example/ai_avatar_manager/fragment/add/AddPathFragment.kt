@@ -1,5 +1,6 @@
 package com.example.ai_avatar_manager.fragment.add
 
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -98,20 +99,27 @@ class AddPathFragment : Fragment() {
     }
 
     private suspend fun addPath(originId: String, destinationId: String) {
-        viewModel.addPath(
-            com.example.avatar_ai_cloud_storage.database.Path(
-                originId,
-                destinationId,
-                binding.distanceEditText.text.toString().toIntOrNull() ?: 0
+        try {
+            viewModel.addPath(
+                com.example.avatar_ai_cloud_storage.database.Path(
+                    originId,
+                    destinationId,
+                    binding.distanceEditText.text.toString().toIntOrNull() ?: 0
+                )
             )
-        )
-        viewModel.showMessage(
-            requireActivity(),
-            getString(R.string.message_path_added)
-        )
-        binding.destination.text = getString(R.string.button_select_destination)
-        this.destinationId = null
-        binding.distanceEditText.text?.clear()
+            viewModel.showMessage(
+                requireActivity(),
+                getString(R.string.message_path_added)
+            )
+            binding.destination.text = getString(R.string.button_select_destination)
+            this.destinationId = null
+            binding.distanceEditText.text?.clear()
+        } catch(e: SQLiteConstraintException) {
+            viewModel.showMessage(
+                requireActivity(),
+                getString(R.string.message_duplicate_error, destinationId)
+            )
+        }
     }
 
     private fun setDiscardButton() {

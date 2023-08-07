@@ -62,6 +62,7 @@
     <string name="button_discard">Discard</string>
     <string name="message_exhibition_added">Exhibition Added</string>
     <string name="message_exhibition_discarded">Exhibition Discarded</string>
+    <string name="message_duplicate_error">Addition Failed: %s already exists!</string>
     <!-- Add Anchor Fragment -->
     <string name="button_host">Host</string>
     <string name="field_anchor_id">Anchor ID</string>
