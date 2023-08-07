@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.database.Exhibition
 import com.example.ai_avatar_manager.databinding.FragmentAddBinding
 import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +75,7 @@ class AddExhibitionFragment : Fragment() {
 
     private suspend fun addExhibition(anchorId: String) {
         viewModel.addExhibition(
-            Exhibition(
+            com.example.avatar_ai_cloud_storage.database.Exhibition(
                 binding.field1EditText.text.toString(),
                 anchorId,
                 binding.descriptionEditText.text.toString()

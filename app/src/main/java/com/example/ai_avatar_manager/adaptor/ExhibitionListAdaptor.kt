@@ -5,19 +5,28 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ai_avatar_manager.database.Exhibition
 import com.example.ai_avatar_manager.databinding.ListItemBinding
+import com.example.avatar_ai_cloud_storage.database.Exhibition
 
 class ExhibitionListAdaptor(private val onExhibitionClicked: (String, String) -> Unit) :
-    ListAdapter<Exhibition, ExhibitionListAdaptor.ExhibitionListViewHolder>(DiffCallback) {
+    ListAdapter<Exhibition, ExhibitionListAdaptor.ExhibitionListViewHolder>(
+        DiffCallback
+    ) {
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Exhibition>() {
-            override fun areItemsTheSame(oldItem: Exhibition, newItem: Exhibition): Boolean {
+        private val DiffCallback = object :
+            DiffUtil.ItemCallback<Exhibition>() {
+            override fun areItemsTheSame(
+                oldItem: Exhibition,
+                newItem: Exhibition
+            ): Boolean {
                 return oldItem.name == newItem.name
             }
 
-            override fun areContentsTheSame(oldItem: Exhibition, newItem: Exhibition): Boolean {
+            override fun areContentsTheSame(
+                oldItem: Exhibition,
+                newItem: Exhibition
+            ): Boolean {
                 return oldItem == newItem
             }
         }

@@ -5,25 +5,34 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ai_avatar_manager.database.Anchor
 import com.example.ai_avatar_manager.databinding.ListItemBinding
+import com.example.avatar_ai_cloud_storage.database.Anchor
 
 class AnchorListAdaptor(
     private val onAnchorClicked: (String) -> Unit,
     private val onDescriptionClicked: (String, String) -> Unit
 ) :
-    ListAdapter<Anchor, AnchorListAdaptor.AnchorListViewHolder>(DiffCallback) {
+    ListAdapter<Anchor, AnchorListAdaptor.AnchorListViewHolder>(
+        DiffCallback
+    ) {
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Anchor>() {
-            override fun areItemsTheSame(oldItem: Anchor, newItem: Anchor): Boolean {
-                return oldItem.id == newItem.id
-            }
+        private val DiffCallback =
+            object : DiffUtil.ItemCallback<Anchor>() {
+                override fun areItemsTheSame(
+                    oldItem: Anchor,
+                    newItem: Anchor
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
 
-            override fun areContentsTheSame(oldItem: Anchor, newItem: Anchor): Boolean {
-                return oldItem == newItem
+                override fun areContentsTheSame(
+                    oldItem: Anchor,
+                    newItem: Anchor
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 
     class AnchorListViewHolder(

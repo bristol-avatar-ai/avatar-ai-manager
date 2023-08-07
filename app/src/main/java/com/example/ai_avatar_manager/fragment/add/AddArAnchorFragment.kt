@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.database.Anchor
 import com.example.ai_avatar_manager.databinding.FragmentAddArAnchorBinding
 import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -197,7 +196,7 @@ class AddArAnchorFragment : Fragment() {
     private fun addAnchorToDatabase(anchorId: String) {
         // Add anchor to database in IO thread.
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.addAnchor(Anchor(anchorId, ""))
+            viewModel.addAnchor(com.example.avatar_ai_cloud_storage.database.Anchor(anchorId, ""))
             viewModel.showMessage(
                 requireActivity(),
                 getString(R.string.message_anchor_added)

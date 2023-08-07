@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ai-avatar-manager"
 include(":app")
- 
+include(":avatar-ai-cloud-storage")

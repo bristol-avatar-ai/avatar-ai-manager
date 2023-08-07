@@ -5,11 +5,7 @@ import android.content.Context
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ai_avatar_manager.database.Anchor
-import com.example.ai_avatar_manager.database.AppDatabase
-import com.example.ai_avatar_manager.database.Exhibition
-import com.example.ai_avatar_manager.database.Path
-import com.example.ai_avatar_manager.network.CloudStorageApi
+import com.example.avatar_ai_cloud_storage.database.AppDatabase
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +35,8 @@ class DatabaseViewModel : ViewModel() {
 
     fun init(context: Context, databaseViewModelCallBack: DatabaseViewModelCallBack) {
         viewModelScope.launch(Dispatchers.IO) {
-            _database = AppDatabase.getDatabase(context)
+            _database =
+                AppDatabase.getDatabase(context)
             databaseViewModelCallBack.onDatabaseViewModelInit(
                 when (_database != null) {
                     true -> DatabaseViewModelCallBack.SUCCESS
@@ -56,13 +53,20 @@ class DatabaseViewModel : ViewModel() {
     fun close(context: Context) {
         AppDatabase.close()
         _database = null
-        File(context.filesDir, AppDatabase.FILENAME).delete()
+        File(
+            context.filesDir,
+            AppDatabase.FILENAME
+        ).delete()
     }
 
     suspend fun uploadDatabase(context: Context): Boolean {
-        val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
+        val databaseFile = File(
+            context.filesDir,
+            AppDatabase.FILENAME
+        )
         _database?.close()
-        val isSuccess = CloudStorageApi.uploadDatabase(databaseFile)
+        val isSuccess =
+            com.example.avatar_ai_cloud_storage.network.CloudStorageApi.uploadDatabase(databaseFile)
         _database = AppDatabase.getDatabase(context)
         return isSuccess
     }
@@ -72,15 +76,15 @@ class DatabaseViewModel : ViewModel() {
         Snackbar.make(view, message, SNACK_BAR_DURATION).show()
     }
 
-    fun getAnchors(): Flow<List<Anchor>> {
+    fun getAnchors(): Flow<List<com.example.avatar_ai_cloud_storage.database.Anchor>> {
         return anchorDao.getAnchors()
     }
 
-    fun getExhibitionsAtAnchor(anchorId: String): Flow<List<Exhibition>> {
+    fun getExhibitionsAtAnchor(anchorId: String): Flow<List<com.example.avatar_ai_cloud_storage.database.Exhibition>> {
         return exhibitionDao.getExhibitionsAtAnchor(anchorId)
     }
 
-    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>> {
+    fun getPathsFromAnchor(anchorId: String): Flow<List<com.example.avatar_ai_cloud_storage.database.Path>> {
         return pathDao.getPathsFromAnchor(anchorId)
     }
 
@@ -88,7 +92,7 @@ class DatabaseViewModel : ViewModel() {
         anchorDao.update(anchorId, description)
     }
 
-    suspend fun addAnchor(anchor: Anchor) {
+    suspend fun addAnchor(anchor: com.example.avatar_ai_cloud_storage.database.Anchor) {
         anchorDao.insert(anchor)
     }
 
@@ -100,7 +104,7 @@ class DatabaseViewModel : ViewModel() {
         exhibitionDao.update(name, description)
     }
 
-    suspend fun addExhibition(exhibition: Exhibition) {
+    suspend fun addExhibition(exhibition: com.example.avatar_ai_cloud_storage.database.Exhibition) {
         exhibitionDao.insert(exhibition)
     }
 
@@ -112,7 +116,7 @@ class DatabaseViewModel : ViewModel() {
         pathDao.update(origin, destination, distance)
     }
 
-    suspend fun addPath(path: Path) {
+    suspend fun addPath(path: com.example.avatar_ai_cloud_storage.database.Path) {
         pathDao.insert(path)
     }
 

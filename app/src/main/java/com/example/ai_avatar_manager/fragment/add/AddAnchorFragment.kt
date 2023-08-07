@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.database.Anchor
 import com.example.ai_avatar_manager.databinding.FragmentAddBinding
 import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +62,7 @@ class AddAnchorFragment : Fragment() {
 
     private suspend fun addAnchor() {
         viewModel.addAnchor(
-            Anchor(
+            com.example.avatar_ai_cloud_storage.database.Anchor(
                 binding.field1EditText.text.toString(),
                 binding.descriptionEditText.text.toString()
             )

@@ -70,7 +70,10 @@ class EditExhibitionFragment : Fragment() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.updateExhibition(name, binding.descriptionEditText.text.toString())
-                viewModel.showMessage(requireActivity(), getString(R.string.message_description_amended))
+                viewModel.showMessage(
+                    requireActivity(),
+                    getString(R.string.message_description_amended)
+                )
                 enableButtons()
             }
         }
@@ -81,7 +84,10 @@ class EditExhibitionFragment : Fragment() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.deleteExhibition(name)
-                viewModel.showMessage(requireActivity(), getString(R.string.message_exhibition_deleted))
+                viewModel.showMessage(
+                    requireActivity(),
+                    getString(R.string.message_exhibition_deleted)
+                )
                 findNavController().navigateUp()
             }
         }

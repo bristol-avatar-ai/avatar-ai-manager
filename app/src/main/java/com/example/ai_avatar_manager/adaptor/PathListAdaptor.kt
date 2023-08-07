@@ -5,22 +5,31 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ai_avatar_manager.database.Path
 import com.example.ai_avatar_manager.databinding.ListItemBinding
+import com.example.avatar_ai_cloud_storage.database.Path
 
 class PathListAdaptor(private val onPathClicked: (String, String, Int) -> Unit) :
-    ListAdapter<Path, PathListAdaptor.PathListViewHolder>(DiffCallback) {
+    ListAdapter<Path, PathListAdaptor.PathListViewHolder>(
+        DiffCallback
+    ) {
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Path>() {
-            override fun areItemsTheSame(oldItem: Path, newItem: Path): Boolean {
-                return oldItem.destination == newItem.destination
-            }
+        private val DiffCallback =
+            object : DiffUtil.ItemCallback<Path>() {
+                override fun areItemsTheSame(
+                    oldItem: Path,
+                    newItem: Path
+                ): Boolean {
+                    return oldItem.destination == newItem.destination
+                }
 
-            override fun areContentsTheSame(oldItem: Path, newItem: Path): Boolean {
-                return oldItem == newItem
+                override fun areContentsTheSame(
+                    oldItem: Path,
+                    newItem: Path
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 
     class PathListViewHolder(
