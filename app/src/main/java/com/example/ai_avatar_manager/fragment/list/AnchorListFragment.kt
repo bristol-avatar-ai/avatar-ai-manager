@@ -70,7 +70,7 @@ class AnchorListFragment : Fragment() {
             navigateToExhibitionList, navigateToEditAnchor
         )
         recyclerView.adapter = anchorListAdapter
-        checkIfViewModelReady()
+        addDatabaseObserver()
     }
 
     private fun setLayoutText() {
@@ -81,16 +81,22 @@ class AnchorListFragment : Fragment() {
         binding.button2.text = getString(R.string.button_add_ar_anchor)
     }
 
-    private fun checkIfViewModelReady() {
-        if (!viewModel.isReady()) {
-            // Navigate to loading fragment if database is not ready.
-            binding.root.findNavController().navigate(
-                AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
-            )
-        } else {
-            submitAdaptorList()
-            setAddAnchorButton()
-            setAddArAnchorButton()
+    private fun addDatabaseObserver() {
+        viewModel.isReady.observe(viewLifecycleOwner) {
+            when (it) {
+                true -> {
+                    submitAdaptorList()
+                    setAddAnchorButton()
+                    setAddArAnchorButton()
+                }
+
+                else -> {
+                    // Navigate to loading fragment if database is not ready.
+                    binding.root.findNavController().navigate(
+                        AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
+                    )
+                }
+            }
         }
     }
 
@@ -154,7 +160,7 @@ class AnchorListFragment : Fragment() {
     }
 
     private fun uploadDatabase() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        requireActivity().lifecycleScope.launch(Dispatchers.IO) {
             if (viewModel.uploadDatabase(requireContext())) {
                 viewModel.showMessage(
                     requireActivity(),
@@ -172,10 +178,6 @@ class AnchorListFragment : Fragment() {
 
     private fun refreshDatabase() {
         viewModel.close(requireContext())
-        // Navigate to the loading fragment.
-        binding.root.findNavController().navigate(
-            AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
-        )
     }
 
 }

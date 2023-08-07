@@ -3,9 +3,12 @@ package com.example.ai_avatar_manager.viewmodel
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
+import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,59 +19,45 @@ private const val TAG = "DatabaseViewModel"
 
 private const val SNACK_BAR_DURATION = 2000
 
-interface DatabaseViewModelCallBack {
-    companion object {
-        const val SUCCESS = 0
-        const val FAILURE = 1
-    }
-
-    fun onDatabaseViewModelInit(status: Int)
-}
-
 class DatabaseViewModel : ViewModel() {
 
+    private val _isReady = MutableLiveData<Boolean?>(null)
+    val isReady: LiveData<Boolean?>
+        get() = _isReady
     private var _database: AppDatabase? = null
     private val database get() = _database!!
     private val anchorDao get() = database.anchorDao()
     private val exhibitionDao get() = database.exhibitionDao()
     private val pathDao get() = database.pathDao()
 
-    fun init(context: Context, databaseViewModelCallBack: DatabaseViewModelCallBack) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _database =
-                AppDatabase.getDatabase(context)
-            databaseViewModelCallBack.onDatabaseViewModelInit(
-                when (_database != null) {
-                    true -> DatabaseViewModelCallBack.SUCCESS
-                    false -> DatabaseViewModelCallBack.FAILURE
-                }
-            )
-        }
+    private fun updateIsReady() {
+        _isReady.postValue(_database != null)
     }
 
-    fun isReady(): Boolean {
-        return _database != null
+    fun init(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _database = AppDatabase.getDatabase(context)
+            updateIsReady()
+        }
     }
 
     fun close(context: Context) {
         AppDatabase.close()
         _database = null
-        File(
-            context.filesDir,
-            AppDatabase.FILENAME
-        ).delete()
+        File(context.filesDir, AppDatabase.FILENAME).delete()
+        _isReady.value = null
     }
 
     suspend fun uploadDatabase(context: Context): Boolean {
-        val databaseFile = File(
-            context.filesDir,
-            AppDatabase.FILENAME
-        )
+        val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
         _database?.close()
-        val isSuccess =
-            com.example.avatar_ai_cloud_storage.network.CloudStorageApi.uploadDatabase(databaseFile)
         _database = AppDatabase.getDatabase(context)
-        return isSuccess
+        updateIsReady()
+        return if (databaseFile.exists()) {
+            CloudStorageApi.uploadDatabase(databaseFile)
+        } else {
+            false
+        }
     }
 
     fun showMessage(activity: Activity, message: String) {
