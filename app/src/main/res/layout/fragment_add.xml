@@ -84,7 +84,7 @@
                 android:layout_marginStart="@dimen/margin"
                 android:hint="@string/field_description"
                 app:counterEnabled="true"
-                app:counterMaxLength="200"
+                app:counterMaxLength="300"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/icon_description"
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
-                    android:maxLength="200" />
+                    android:maxLength="300" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
