@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ai_avatar_manager"
+    namespace = "com.example.avatar_ai_manager"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.ai_avatar_manager"
+        applicationId = "com.example.avatar_ai_manager"
         minSdk = 26
         targetSdk = 33
         versionCode = 1

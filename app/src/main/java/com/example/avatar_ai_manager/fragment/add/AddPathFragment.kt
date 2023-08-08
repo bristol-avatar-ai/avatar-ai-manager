@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.fragment.add
+package com.example.avatar_ai_manager.fragment.add
 
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
@@ -10,9 +10,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.databinding.FragmentPathBinding
-import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.databinding.FragmentPathBinding
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -114,7 +114,7 @@ class AddPathFragment : Fragment() {
             binding.destination.text = getString(R.string.button_select_destination)
             this.destinationId = null
             binding.distanceEditText.text?.clear()
-        } catch(e: SQLiteConstraintException) {
+        } catch (e: SQLiteConstraintException) {
             viewModel.showMessage(
                 requireActivity(),
                 getString(R.string.message_duplicate_error, destinationId)

@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.viewmodel
+package com.example.avatar_ai_manager.viewmodel
 
 import android.app.Activity
 import android.content.Context

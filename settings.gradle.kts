@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ai-avatar-manager"
+rootProject.name = "avatar-ai-manager"
 include(":app")
 include(":avatar-ai-cloud-storage")

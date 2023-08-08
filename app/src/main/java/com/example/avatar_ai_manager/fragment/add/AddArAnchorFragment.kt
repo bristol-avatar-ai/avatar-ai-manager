@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.fragment.add
+package com.example.avatar_ai_manager.fragment.add
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,9 +14,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.databinding.FragmentAddArAnchorBinding
-import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.databinding.FragmentAddArAnchorBinding
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.ar.core.Config
 import com.google.ar.core.FutureState
@@ -198,12 +198,17 @@ class AddArAnchorFragment : Fragment() {
         // Add anchor to database in IO thread.
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                viewModel.addAnchor(com.example.avatar_ai_cloud_storage.database.Anchor(anchorId, ""))
+                viewModel.addAnchor(
+                    com.example.avatar_ai_cloud_storage.database.Anchor(
+                        anchorId,
+                        ""
+                    )
+                )
                 viewModel.showMessage(
                     requireActivity(),
                     getString(R.string.message_anchor_added)
                 )
-            } catch(e: SQLiteConstraintException) {
+            } catch (e: SQLiteConstraintException) {
                 viewModel.showMessage(
                     requireActivity(),
                     getString(R.string.message_duplicate_error, anchorId)

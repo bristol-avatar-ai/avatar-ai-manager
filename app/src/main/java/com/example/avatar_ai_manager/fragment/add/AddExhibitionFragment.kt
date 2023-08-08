@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.fragment.add
+package com.example.avatar_ai_manager.fragment.add
 
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.databinding.FragmentAddBinding
-import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.databinding.FragmentAddBinding
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -89,7 +89,7 @@ class AddExhibitionFragment : Fragment() {
             )
             binding.field1EditText.text?.clear()
             binding.descriptionEditText.text?.clear()
-        } catch(e: SQLiteConstraintException) {
+        } catch (e: SQLiteConstraintException) {
             viewModel.showMessage(
                 requireActivity(),
                 getString(R.string.message_duplicate_error, binding.field1EditText.text.toString())

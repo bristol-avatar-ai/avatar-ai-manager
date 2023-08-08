@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager
+package com.example.avatar_ai_manager
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

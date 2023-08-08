@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.fragment.edit
+package com.example.avatar_ai_manager.fragment.edit
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.databinding.FragmentEditDescriptionBinding
-import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.databinding.FragmentEditDescriptionBinding
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

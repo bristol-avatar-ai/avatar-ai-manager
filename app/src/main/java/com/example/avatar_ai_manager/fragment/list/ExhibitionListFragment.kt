@@ -1,4 +1,4 @@
-package com.example.ai_avatar_manager.fragment.list
+package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ai_avatar_manager.R
-import com.example.ai_avatar_manager.adaptor.ExhibitionListAdaptor
-import com.example.ai_avatar_manager.databinding.FragmentListBinding
-import com.example.ai_avatar_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.adaptor.ExhibitionListAdaptor
+import com.example.avatar_ai_manager.databinding.FragmentListBinding
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

@@ -1,11 +1,11 @@
-package com.example.ai_avatar_manager.adaptor
+package com.example.avatar_ai_manager.adaptor
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ai_avatar_manager.databinding.ListItemBinding
+import com.example.avatar_ai_manager.databinding.ListItemBinding
 import com.example.avatar_ai_cloud_storage.database.Path
 
 class PathListAdaptor(private val onPathClicked: (String, String, Int) -> Unit) :

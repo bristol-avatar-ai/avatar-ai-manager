@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/anchorListFragment"
-        android:name="com.example.ai_avatar_manager.fragment.list.AnchorListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.AnchorListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/exhibitionListFragment"
-        android:name="com.example.ai_avatar_manager.fragment.list.ExhibitionListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.ExhibitionListFragment"
         android:label="@string/exhibition_list_fragment_label">
         <argument
             android:name="anchorId"
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/pathListFragment"
-        android:name="com.example.ai_avatar_manager.fragment.list.PathListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.PathListFragment"
         android:label="@string/path_list_fragment_label">
         <action
             android:id="@+id/action_pathListFragment_to_exhibitionListFragment"
@@ -61,7 +61,7 @@
     </fragment>
     <fragment
         android:id="@+id/editAnchorFragment"
-        android:name="com.example.ai_avatar_manager.fragment.edit.EditAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditAnchorFragment"
         android:label="@string/edit_anchor_fragment_label">
         <argument
             android:name="anchorId"
@@ -73,7 +73,7 @@
     </fragment>
     <fragment
         android:id="@+id/editExhibitionFragment"
-        android:name="com.example.ai_avatar_manager.fragment.edit.EditExhibitionFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditExhibitionFragment"
         android:label="@string/edit_exhibition_fragment_label">
         <argument
             android:name="name"
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/addExhibitionFragment"
-        android:name="com.example.ai_avatar_manager.fragment.add.AddExhibitionFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddExhibitionFragment"
         android:label="@string/add_exhibition_fragment_label"
         tools:layout="@layout/fragment_add" >
         <argument
@@ -94,7 +94,7 @@
     </fragment>
     <fragment
         android:id="@+id/addArAnchorFragment"
-        android:name="com.example.ai_avatar_manager.fragment.add.AddArAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddArAnchorFragment"
         android:label="@string/add_anchor_fragment_label">
         <action
             android:id="@+id/action_addAnchorFragment_to_editAnchorFragment"
@@ -103,11 +103,11 @@
     </fragment>
     <fragment
         android:id="@+id/addAnchorFragment"
-        android:name="com.example.ai_avatar_manager.fragment.add.AddAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddAnchorFragment"
         android:label="@string/app_name" />
     <fragment
         android:id="@+id/addPathFragment"
-        android:name="com.example.ai_avatar_manager.fragment.add.AddPathFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddPathFragment"
         android:label="@string/add_path_fragment_label">
         <argument
             android:name="originId"
@@ -124,7 +124,7 @@
     </fragment>
     <fragment
         android:id="@+id/pathSelectionFragment"
-        android:name="com.example.ai_avatar_manager.fragment.PathSelectionFragment"
+        android:name="com.example.avatar_ai_manager.fragment.PathSelectionFragment"
         android:label="@string/select_path_fragment_label">
         <action
             android:id="@+id/action_pathSelectionFragment_to_addPathFragment"
@@ -137,7 +137,7 @@
     </fragment>
     <fragment
         android:id="@+id/editPathFragment"
-        android:name="com.example.ai_avatar_manager.fragment.edit.EditPathFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditPathFragment"
         android:label="@string/edit_path_fragment_label">
         <argument
             android:name="originId"
