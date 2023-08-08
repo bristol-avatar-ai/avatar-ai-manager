@@ -1,0 +1,3 @@
+[submodule "avatar-ai-cloud-storage"]
+	path = avatar-ai-cloud-storage
+	url = https://github.com/bristol-avatar-ai/avatar-ai-cloud-storage

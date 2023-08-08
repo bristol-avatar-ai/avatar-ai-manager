@@ -1,16 +1,16 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.example.ai_avatar_manager"
+    namespace = "com.example.avatar_ai_manager"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.ai_avatar_manager"
+        applicationId = "com.example.avatar_ai_manager"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
@@ -23,12 +23,6 @@ android {
     }
 
     buildTypes {
-        all {
-            // IBM Watson Speech to Text Credentials
-            val cloudObjectStorageApiKey = project.property("CLOUD_OBJECT_STORAGE_API_KEY")
-            buildConfigField("String", "CLOUD_OBJECT_STORAGE_API_KEY", "$cloudObjectStorageApiKey")
-        }
-
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -45,7 +39,6 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        buildConfig = true
         viewBinding = true
     }
 
@@ -58,6 +51,9 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    // Cloud Storage and Database Module
+    implementation(project(":avatar-ai-cloud-storage"))
+
     // Navigation libraries
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
@@ -66,14 +62,6 @@ dependencies {
     implementation("androidx.room:room-runtime:2.5.2")
     kapt("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
-
-    // WEb Service Libraries
-    // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
-    // Moshi
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
-    // Retrofit with Moshi Converter
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 
     // SceneView
     implementation("io.github.sceneview:arsceneview:0.10.0")

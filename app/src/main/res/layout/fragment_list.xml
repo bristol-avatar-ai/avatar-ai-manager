@@ -7,6 +7,27 @@
     android:layout_marginHorizontal="@dimen/margin"
     android:layout_marginTop="@dimen/margin">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/recycler_view"
+        app:layout_constraintEnd_toEndOf="@id/recycler_view"
+        app:layout_constraintStart_toStartOf="@id/recycler_view"
+        app:layout_constraintTop_toTopOf="@id/recycler_view" />
+
+    <TextView
+        android:id="@+id/loading_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@id/progress_bar"
+        app:layout_constraintStart_toStartOf="@id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/progress_bar"
+        tools:text="@string/message_loading" />
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -14,10 +35,10 @@
         android:layout_marginHorizontal="@dimen/margin_between_elements"
         android:fontFamily="sans-serif-medium"
         android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintBottom_toTopOf="@id/header_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/header_1"
         tools:text="@string/title_anchor_list" />
 
     <TextView

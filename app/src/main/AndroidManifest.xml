@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ai_avatar_manager"
+        android:theme="@style/Theme.avatar_ai_manager"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
