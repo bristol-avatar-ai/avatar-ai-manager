@@ -7,7 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.avatar_ai_cloud_storage.database.Anchor
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
+import com.example.avatar_ai_cloud_storage.database.Exhibition
+import com.example.avatar_ai_cloud_storage.database.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -21,43 +24,57 @@ private const val SNACK_BAR_DURATION = 2000
 
 class DatabaseViewModel : ViewModel() {
 
-    private val _isReady = MutableLiveData<Boolean?>(null)
-    val isReady: LiveData<Boolean?>
-        get() = _isReady
+    enum class Status { LOADING, READY, NULL }
+
+    private val _status = MutableLiveData(Status.NULL)
+    val status: LiveData<Status> get() = _status
+
     private var _database: AppDatabase? = null
     private val database get() = _database!!
     private val anchorDao get() = database.anchorDao()
     private val exhibitionDao get() = database.exhibitionDao()
     private val pathDao get() = database.pathDao()
 
-    private fun updateIsReady() {
-        _isReady.postValue(_database != null)
+    private fun updateStatus() {
+        _status.postValue(
+            if (_database == null) {
+                Status.NULL
+            } else {
+                Status.READY
+            }
+        )
     }
 
     fun init(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _database = AppDatabase.getDatabase(context)
-            updateIsReady()
+        if (_database == null) {
+            _status.postValue(Status.LOADING)
+            viewModelScope.launch(Dispatchers.IO) {
+                _database = AppDatabase.getDatabase(context)
+                updateStatus()
+            }
         }
     }
 
-    fun close(context: Context) {
+    fun reload(context: Context) {
         AppDatabase.close()
         _database = null
         File(context.filesDir, AppDatabase.FILENAME).delete()
-        _isReady.value = null
+        _status.postValue(Status.LOADING)
+        init(context)
     }
 
     suspend fun uploadDatabase(context: Context): Boolean {
+        _status.postValue(Status.LOADING)
         val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
-        _database?.close()
-        _database = AppDatabase.getDatabase(context)
-        updateIsReady()
-        return if (databaseFile.exists()) {
-            CloudStorageApi.uploadDatabase(databaseFile)
-        } else {
-            false
+        AppDatabase.close()
+        _database = null
+        var success = false
+        if (databaseFile.exists()) {
+            success = CloudStorageApi.uploadDatabase(databaseFile)
         }
+        _database = AppDatabase.getDatabase(context)
+        updateStatus()
+        return success
     }
 
     fun showMessage(activity: Activity, message: String) {
@@ -65,15 +82,15 @@ class DatabaseViewModel : ViewModel() {
         Snackbar.make(view, message, SNACK_BAR_DURATION).show()
     }
 
-    fun getAnchors(): Flow<List<com.example.avatar_ai_cloud_storage.database.Anchor>> {
-        return anchorDao.getAnchors()
+    fun getAnchors(): Flow<List<Anchor>> {
+        return anchorDao.getAnchorsFlow()
     }
 
-    fun getExhibitionsAtAnchor(anchorId: String): Flow<List<com.example.avatar_ai_cloud_storage.database.Exhibition>> {
+    fun getExhibitionsAtAnchor(anchorId: String): Flow<List<Exhibition>> {
         return exhibitionDao.getExhibitionsAtAnchor(anchorId)
     }
 
-    fun getPathsFromAnchor(anchorId: String): Flow<List<com.example.avatar_ai_cloud_storage.database.Path>> {
+    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>> {
         return pathDao.getPathsFromAnchor(anchorId)
     }
 
@@ -81,7 +98,7 @@ class DatabaseViewModel : ViewModel() {
         anchorDao.update(anchorId, description)
     }
 
-    suspend fun addAnchor(anchor: com.example.avatar_ai_cloud_storage.database.Anchor) {
+    suspend fun addAnchor(anchor: Anchor) {
         anchorDao.insert(anchor)
     }
 
@@ -93,7 +110,7 @@ class DatabaseViewModel : ViewModel() {
         exhibitionDao.update(name, description)
     }
 
-    suspend fun addExhibition(exhibition: com.example.avatar_ai_cloud_storage.database.Exhibition) {
+    suspend fun addExhibition(exhibition: Exhibition) {
         exhibitionDao.insert(exhibition)
     }
 
@@ -105,13 +122,12 @@ class DatabaseViewModel : ViewModel() {
         pathDao.update(origin, destination, distance)
     }
 
-    suspend fun addPath(path: com.example.avatar_ai_cloud_storage.database.Path) {
+    suspend fun addPath(path: Path) {
         pathDao.insert(path)
     }
 
     suspend fun deletePath(origin: String, destination: String) {
         pathDao.delete(origin, destination)
     }
-
 
 }

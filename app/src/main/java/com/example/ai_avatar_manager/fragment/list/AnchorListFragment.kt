@@ -59,9 +59,14 @@ class AnchorListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (viewModel.status.value == DatabaseViewModel.Status.NULL) {
+            viewModel.init(requireContext())
+        }
         // Enable custom options menu.
         setHasOptionsMenu(true)
         setLayoutText()
+        setAddAnchorButton()
+        setAddArAnchorButton()
 
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -81,33 +86,6 @@ class AnchorListFragment : Fragment() {
         binding.button2.text = getString(R.string.button_add_ar_anchor)
     }
 
-    private fun addDatabaseObserver() {
-        viewModel.isReady.observe(viewLifecycleOwner) {
-            when (it) {
-                true -> {
-                    submitAdaptorList()
-                    setAddAnchorButton()
-                    setAddArAnchorButton()
-                }
-
-                else -> {
-                    // Navigate to loading fragment if database is not ready.
-                    binding.root.findNavController().navigate(
-                        AnchorListFragmentDirections.actionAnchorListFragmentToLoadingFragment()
-                    )
-                }
-            }
-        }
-    }
-
-    private fun submitAdaptorList() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            viewModel.getAnchors().collect {
-                (recyclerView.adapter as AnchorListAdaptor).submitList(it)
-            }
-        }
-    }
-
     private fun setAddAnchorButton() {
         binding.button1.setOnClickListener {
             binding.root.findNavController()
@@ -122,6 +100,53 @@ class AnchorListFragment : Fragment() {
         }
     }
 
+    private fun addDatabaseObserver() {
+        viewModel.status.observe(viewLifecycleOwner) {
+            when (it) {
+                DatabaseViewModel.Status.NULL -> {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.loadingMessage.text = getString(R.string.message_network_error)
+                    binding.loadingMessage.visibility = View.VISIBLE
+                    (recyclerView.adapter as AnchorListAdaptor).submitList(emptyList())
+                    disableButtons()
+                }
+
+                DatabaseViewModel.Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.loadingMessage.text = getString(R.string.message_loading)
+                    binding.loadingMessage.visibility = View.VISIBLE
+                    (recyclerView.adapter as AnchorListAdaptor).submitList(emptyList())
+                    disableButtons()
+                }
+
+                DatabaseViewModel.Status.READY -> {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.loadingMessage.visibility = View.INVISIBLE
+                    submitAdaptorList()
+                    enableButtons()
+                }
+            }
+        }
+    }
+
+    private fun enableButtons() {
+        binding.button1.isEnabled = true
+        binding.button2.isEnabled = true
+    }
+
+    private fun disableButtons() {
+        binding.button1.isEnabled = false
+        binding.button2.isEnabled = false
+    }
+
+    private fun submitAdaptorList() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            viewModel.getAnchors().collect {
+                (recyclerView.adapter as AnchorListAdaptor).submitList(it)
+            }
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
@@ -132,14 +157,18 @@ class AnchorListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_upload -> {
-                item.isEnabled = false
-                uploadDatabaseConfirmation()
-                item.isEnabled = true
+                if (viewModel.status.value == DatabaseViewModel.Status.READY) {
+                    item.isEnabled = false
+                    uploadDatabaseConfirmation()
+                    item.isEnabled = true
+                }
                 true
             }
 
             R.id.action_refresh -> {
-                refreshDatabase()
+                if (viewModel.status.value != DatabaseViewModel.Status.LOADING) {
+                    refreshDatabase()
+                }
                 true
             }
 
@@ -177,7 +206,7 @@ class AnchorListFragment : Fragment() {
     }
 
     private fun refreshDatabase() {
-        viewModel.close(requireContext())
+        viewModel.reload(requireContext())
     }
 
 }
