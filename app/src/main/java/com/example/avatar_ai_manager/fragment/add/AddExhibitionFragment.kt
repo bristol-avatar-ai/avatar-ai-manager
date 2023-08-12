@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentAddBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -77,7 +78,7 @@ class AddExhibitionFragment : Fragment() {
     private suspend fun addExhibition(anchorId: String) {
         try {
             viewModel.addExhibition(
-                com.example.avatar_ai_cloud_storage.database.Exhibition(
+                Feature(
                     binding.field1EditText.text.toString(),
                     anchorId,
                     binding.descriptionEditText.text.toString()

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avatar_ai_cloud_storage.database.Anchor
+import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.databinding.ListItemBinding
 
 class PathSelectionAdaptor(

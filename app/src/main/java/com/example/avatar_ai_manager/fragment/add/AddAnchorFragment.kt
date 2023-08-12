@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentAddBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -64,7 +65,7 @@ class AddAnchorFragment : Fragment() {
     private suspend fun addAnchor() {
         try {
             viewModel.addAnchor(
-                com.example.avatar_ai_cloud_storage.database.Anchor(
+                Anchor(
                     binding.field1EditText.text.toString(),
                     binding.descriptionEditText.text.toString()
                 )

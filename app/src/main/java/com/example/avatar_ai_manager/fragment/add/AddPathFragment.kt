@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentPathBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -101,7 +102,7 @@ class AddPathFragment : Fragment() {
     private suspend fun addPath(originId: String, destinationId: String) {
         try {
             viewModel.addPath(
-                com.example.avatar_ai_cloud_storage.database.Path(
+                Path(
                     originId,
                     destinationId,
                     binding.distanceEditText.text.toString().toIntOrNull() ?: 0
