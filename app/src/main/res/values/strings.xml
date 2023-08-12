@@ -29,7 +29,7 @@
     <string name="header_description">Description</string>
     <string name="button_add_anchor">Add Anchor Reference</string>
     <string name="button_add_ar_anchor">Add Cloud Anchor</string>
-    <!--Exhibition List Fragment-->
+    <!--Feature List Fragment-->
     <string name="title_exhibition_list">Anchor: %s</string>
     <string name="header_exhibition_name">Name</string>
     <string name="header_exhibition_description">Description</string>
@@ -56,7 +56,7 @@
     <string name="field_distance">Distance</string>
     <string name="message_path_amended">Path Amended</string>
     <string name="message_path_deleted">Path Deleted</string>
-    <!-- Add Exhibition Fragment -->
+    <!-- Add Feature Fragment -->
     <string name="field_name">Name</string>
     <string name="button_add">Add</string>
     <string name="button_discard">Discard</string>

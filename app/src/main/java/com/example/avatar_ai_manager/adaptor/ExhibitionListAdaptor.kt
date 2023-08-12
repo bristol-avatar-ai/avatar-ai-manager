@@ -5,27 +5,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avatar_ai_cloud_storage.database.Exhibition
+import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_manager.databinding.ListItemBinding
 
 class ExhibitionListAdaptor(private val onExhibitionClicked: (String, String) -> Unit) :
-    ListAdapter<Exhibition, ExhibitionListAdaptor.ExhibitionListViewHolder>(
+    ListAdapter<Feature, ExhibitionListAdaptor.ExhibitionListViewHolder>(
         DiffCallback
     ) {
 
     companion object {
         private val DiffCallback = object :
-            DiffUtil.ItemCallback<Exhibition>() {
+            DiffUtil.ItemCallback<Feature>() {
             override fun areItemsTheSame(
-                oldItem: Exhibition,
-                newItem: Exhibition
+                oldItem: Feature,
+                newItem: Feature
             ): Boolean {
                 return oldItem.name == newItem.name
             }
 
             override fun areContentsTheSame(
-                oldItem: Exhibition,
-                newItem: Exhibition
+                oldItem: Feature,
+                newItem: Feature
             ): Boolean {
                 return oldItem == newItem
             }
@@ -36,12 +36,12 @@ class ExhibitionListAdaptor(private val onExhibitionClicked: (String, String) ->
         private var binding: ListItemBinding,
         private val onExhibitionClicked: (String, String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(exhibition: Exhibition) {
-            binding.column1.text = exhibition.name
-            binding.column2.text = exhibition.description
+        fun bind(feature: Feature) {
+            binding.column1.text = feature.name
+            binding.column2.text = feature.description
 
             binding.root.setOnClickListener {
-                onExhibitionClicked(exhibition.name, exhibition.description)
+                onExhibitionClicked(feature.name, feature.description)
             }
         }
     }

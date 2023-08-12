@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentAddArAnchorBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -228,7 +229,7 @@ class AddArAnchorFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 viewModel.addAnchor(
-                    com.example.avatar_ai_cloud_storage.database.Anchor(
+                    Anchor(
                         anchorId,
                         ""
                     )

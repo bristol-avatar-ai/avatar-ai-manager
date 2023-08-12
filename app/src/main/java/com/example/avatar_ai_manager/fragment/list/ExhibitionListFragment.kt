@@ -83,7 +83,7 @@ class ExhibitionListFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.Main) {
             anchorId?.let { anchorId ->
-                viewModel.getExhibitionsAtAnchor(anchorId).collect() {
+                viewModel.getFeaturesAtAnchor(anchorId).collect() {
                     exhibitionListAdaptor.submitList(it)
                 }
             }

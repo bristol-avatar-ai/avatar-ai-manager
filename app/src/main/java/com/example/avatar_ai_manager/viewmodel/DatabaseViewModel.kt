@@ -7,10 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.avatar_ai_cloud_storage.database.Anchor
+import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
-import com.example.avatar_ai_cloud_storage.database.Exhibition
-import com.example.avatar_ai_cloud_storage.database.Path
+import com.example.avatar_ai_cloud_storage.database.entity.Feature
+import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ class DatabaseViewModel : ViewModel() {
     private var _database: AppDatabase? = null
     private val database get() = _database!!
     private val anchorDao get() = database.anchorDao()
-    private val exhibitionDao get() = database.exhibitionDao()
+    private val featureDao get() = database.featureDao()
     private val pathDao get() = database.pathDao()
 
     private fun updateStatus() {
@@ -86,8 +86,8 @@ class DatabaseViewModel : ViewModel() {
         return anchorDao.getAnchorsFlow()
     }
 
-    fun getExhibitionsAtAnchor(anchorId: String): Flow<List<Exhibition>> {
-        return exhibitionDao.getExhibitionsAtAnchor(anchorId)
+    fun getFeaturesAtAnchor(anchorId: String): Flow<List<Feature>> {
+        return featureDao.getFeaturesAtAnchor(anchorId)
     }
 
     fun getPathsFromAnchor(anchorId: String): Flow<List<Path>> {
@@ -107,15 +107,15 @@ class DatabaseViewModel : ViewModel() {
     }
 
     suspend fun updateExhibition(name: String, description: String) {
-        exhibitionDao.update(name, description)
+        featureDao.update(name, description)
     }
 
-    suspend fun addExhibition(exhibition: Exhibition) {
-        exhibitionDao.insert(exhibition)
+    suspend fun addExhibition(feature: Feature) {
+        featureDao.insert(feature)
     }
 
     suspend fun deleteExhibition(name: String) {
-        exhibitionDao.delete(name)
+        featureDao.delete(name)
     }
 
     suspend fun updatePath(origin: String, destination: String, distance: Int) {

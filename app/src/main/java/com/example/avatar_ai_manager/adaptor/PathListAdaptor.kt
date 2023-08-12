@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.avatar_ai_manager.databinding.ListItemBinding
-import com.example.avatar_ai_cloud_storage.database.Path
+import com.example.avatar_ai_cloud_storage.database.entity.Path
 
 class PathListAdaptor(private val onPathClicked: (String, String, Int) -> Unit) :
     ListAdapter<Path, PathListAdaptor.PathListViewHolder>(
