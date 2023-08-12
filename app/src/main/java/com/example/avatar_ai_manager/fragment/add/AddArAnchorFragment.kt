@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +69,10 @@ class AddArAnchorFragment : Fragment() {
         }
     }
 
+    /*
+     * Sets up the AR scene view, and configures event listeners for
+     * the avatar and host buttons.
+     */
     @SuppressLint("ClickableViewAccessibility")
     private fun initArFragment() {
         sceneView = binding.sceneView.apply {
@@ -84,38 +87,66 @@ class AddArAnchorFragment : Fragment() {
         }
     }
 
+    /*
+     * Handles the avatar button's click event.
+     *
+     * Depending on the current state of the avatar, this function either
+     * loads the avatar into the AR scene or places it. The button's text is
+     * updated accordingly to reflect the next action.
+     */
     private fun setAvatarButtonOnClick() {
+        // If avatar hasn't been loaded or is already placed
         if (!avatarIsLoaded || avatarIsPlaced) {
+            // Remove the current avatar model node from the scene and destroy it
             modelNode?.let {
                 sceneView.removeChild(it)
                 it.destroy()
             }
+
             loadAvatar()
+
+            // Update the button's text to indicate the next action is placing the avatar
             avatarButton.text = getString(R.string.button_place_avatar)
+
             avatarIsPlaced = false
+
         } else {
             placeAvatar()
+
+            // Update the button's text to indicate the next action is loading a new avatar
             avatarButton.text = getString(R.string.button_summon_avatar)
         }
-
     }
 
+    /*
+    * Places the avatar in the AR scene by anchoring it.
+    */
     private fun placeAvatar() {
         modelNode?.anchor()
         avatarIsPlaced = true
     }
 
+    /*
+     * Loads and displays an avatar in the AR scene.
+     *
+     * This function initializes an avatar model with predefined parameters
+     * such as its file location, placement mode, and scale. Once initialized,
+     * the avatar is added to the scene view and is set as the selected node.
+     */
     private fun loadAvatar() {
+        // Define the avatar's model details
         val avatar = Model(
             fileLocation = "models/robot_playground.glb",
             placementMode = PlacementMode.DISABLED,
             scale = 0.8f
         )
 
+        // Create a node for the avatar in the AR scene with the desired placement mode
         modelNode = ArModelNode(
             sceneView.engine,
             PlacementMode.INSTANT,
         ).apply {
+            // Asynchronously load the model in GLB format with specified attributes
             loadModelGlbAsync(
                 glbFileLocation = avatar.fileLocation,
                 centerOrigin = Position(y = -1.0f),
@@ -123,10 +154,18 @@ class AddArAnchorFragment : Fragment() {
             )
         }
         sceneView.addChild(modelNode!!)
+
+        // Set the loaded avatar as the currently selected node in the scene
         sceneView.selectedNode = modelNode
+
         avatarIsLoaded = true
     }
 
+    /*
+    * This function hosts the cloud anchor. It will display a
+    * message to the user if there is not enough data to upload
+    * the anchor.
+    */
     private fun hostButtonOnClick(context: Context) {
         if (!avatarIsPlaced) {
             Toast.makeText(context, "Please place the model first", Toast.LENGTH_SHORT).show()
@@ -140,9 +179,8 @@ class AddArAnchorFragment : Fragment() {
                 ).show()
                 return
             }
-            Log.d(TAG, "hosting begining:")
 
-            // IMPORTANT: This uploads the cloud anchor
+            // IMPORTANT: This hosts the anchor to the cloud
             val cloudAnchorFuture = modelNode?.anchor?.let { anchor ->
                 sceneView.arSession?.hostCloudAnchorAsync(
                     anchor,
@@ -151,22 +189,13 @@ class AddArAnchorFragment : Fragment() {
                 )
             }
 
-            Log.d(TAG, "hosting func over")
-
+            // Need to add in a loading screen while the anchor is loading so the user does not think it has glitched
             while (cloudAnchorFuture?.state == FutureState.PENDING) {
                 // TODO: Log.d(TAG, "pending")
             }
 
-            Log.d(TAG, "pending over")
-
+            // Select cloud anchor ID and add to database
             val cloudAnchorId = cloudAnchorFuture?.resultCloudAnchorId
-            val cloudState = cloudAnchorFuture?.state
-
-            Log.d(TAG, "Cloud Anchor ID: $cloudAnchorId, State: $cloudState")
-
-            if (cloudAnchorId != null) {
-                Log.d(TAG, "ID: $cloudAnchorId")
-            }
             processCloudAnchor(cloudAnchorId)
         }
 
