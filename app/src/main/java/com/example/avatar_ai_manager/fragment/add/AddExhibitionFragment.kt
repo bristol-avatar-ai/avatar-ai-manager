@@ -69,15 +69,15 @@ class AddExhibitionFragment : Fragment() {
         binding.button1.setOnClickListener() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
-                addExhibition(anchorId)
+                addFeature(anchorId)
                 enableButtons()
             }
         }
     }
 
-    private suspend fun addExhibition(anchorId: String) {
+    private suspend fun addFeature(anchorId: String) {
         try {
-            viewModel.addExhibition(
+            viewModel.addFeature(
                 Feature(
                     binding.field1EditText.text.toString(),
                     anchorId,

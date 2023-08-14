@@ -69,7 +69,7 @@ class EditExhibitionFragment : Fragment() {
         binding.button1.setOnClickListener() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.updateExhibition(name, binding.descriptionEditText.text.toString())
+                viewModel.updateFeature(name, binding.descriptionEditText.text.toString())
                 viewModel.showMessage(
                     requireActivity(),
                     getString(R.string.message_description_amended)
@@ -83,7 +83,7 @@ class EditExhibitionFragment : Fragment() {
         binding.button2.setOnClickListener() {
             disableButtons()
             lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.deleteExhibition(name)
+                viewModel.deleteFeature(name)
                 viewModel.showMessage(
                     requireActivity(),
                     getString(R.string.message_exhibition_deleted)

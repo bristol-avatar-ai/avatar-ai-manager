@@ -59,7 +59,7 @@ class AnchorListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (viewModel.status.value == DatabaseViewModel.Status.NULL) {
+        if (viewModel.status.value == DatabaseViewModel.Status.ERROR) {
             viewModel.init(requireContext())
         }
         // Enable custom options menu.
@@ -103,7 +103,7 @@ class AnchorListFragment : Fragment() {
     private fun addDatabaseObserver() {
         viewModel.status.observe(viewLifecycleOwner) {
             when (it) {
-                DatabaseViewModel.Status.NULL -> {
+                DatabaseViewModel.Status.ERROR -> {
                     binding.progressBar.visibility = View.INVISIBLE
                     binding.loadingMessage.text = getString(R.string.message_network_error)
                     binding.loadingMessage.visibility = View.VISIBLE

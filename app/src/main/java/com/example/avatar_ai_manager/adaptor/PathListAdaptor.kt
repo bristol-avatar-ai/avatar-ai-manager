@@ -20,7 +20,7 @@ class PathListAdaptor(private val onPathClicked: (String, String, Int) -> Unit) 
                     oldItem: Path,
                     newItem: Path
                 ): Boolean {
-                    return oldItem.destination == newItem.destination
+                    return oldItem.anchor2 == newItem.anchor2
                 }
 
                 override fun areContentsTheSame(
@@ -37,11 +37,11 @@ class PathListAdaptor(private val onPathClicked: (String, String, Int) -> Unit) 
         private val onPathClicked: (String, String, Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(path: Path) {
-            binding.column1.text = path.destination
+            binding.column1.text = path.anchor2
             binding.column2.text = path.distance.toString()
 
             binding.root.setOnClickListener {
-                onPathClicked(path.origin, path.destination, path.distance)
+                onPathClicked(path.anchor1, path.anchor2, path.distance)
             }
         }
     }

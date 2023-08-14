@@ -2,13 +2,14 @@ package com.example.avatar_ai_manager.viewmodel
 
 import android.app.Activity
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
+import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
@@ -24,9 +25,9 @@ private const val SNACK_BAR_DURATION = 2000
 
 class DatabaseViewModel : ViewModel() {
 
-    enum class Status { LOADING, READY, NULL }
+    enum class Status { LOADING, READY, ERROR }
 
-    private val _status = MutableLiveData(Status.NULL)
+    private val _status = MutableLiveData(Status.ERROR)
     val status: LiveData<Status> get() = _status
 
     private var _database: AppDatabase? = null
@@ -38,7 +39,7 @@ class DatabaseViewModel : ViewModel() {
     private fun updateStatus() {
         _status.postValue(
             if (_database == null) {
-                Status.NULL
+                Status.ERROR
             } else {
                 Status.READY
             }
@@ -94,40 +95,54 @@ class DatabaseViewModel : ViewModel() {
         return pathDao.getPathsFromAnchor(anchorId)
     }
 
-    suspend fun updateAnchor(anchorId: String, description: String) {
-        anchorDao.update(anchorId, description)
-    }
-
     suspend fun addAnchor(anchor: Anchor) {
         anchorDao.insert(anchor)
+    }
+
+    suspend fun updateAnchor(anchorId: String, description: String) {
+        anchorDao.update(anchorId, description)
     }
 
     suspend fun deleteAnchor(anchorId: String) {
         anchorDao.delete(anchorId)
     }
 
-    suspend fun updateExhibition(name: String, description: String) {
-        featureDao.update(name, description)
-    }
-
-    suspend fun addExhibition(feature: Feature) {
+    suspend fun addFeature(feature: Feature) {
         featureDao.insert(feature)
     }
 
-    suspend fun deleteExhibition(name: String) {
+    suspend fun updateFeature(name: String, description: String) {
+        featureDao.update(name, description)
+    }
+
+    suspend fun deleteFeature(name: String) {
         featureDao.delete(name)
     }
 
-    suspend fun updatePath(origin: String, destination: String, distance: Int) {
-        pathDao.update(origin, destination, distance)
+    /*
+    * Adds a path to the database. A SQLiteConstraintException is thrown if
+    * the anchors are the same, or if the combination already exists. Paths
+    * are bidirectional, so the anchor1 and anchor2 are always sorted to
+    * prevent path duplication.
+     */
+    suspend fun addPath(anchor1: String, anchor2: String, distance: Int) {
+        if (anchor1 == anchor2) {
+            throw SQLiteConstraintException(
+                "UNIQUE constraint failed: anchor1 must not be identical to anchor2"
+            )
+        }
+        val sortedAnchors = listOf(anchor1, anchor2).sorted()
+        pathDao.insert(Path(sortedAnchors[0], sortedAnchors[1], distance))
     }
 
-    suspend fun addPath(path: Path) {
-        pathDao.insert(path)
+    suspend fun updatePath(anchor1: String, anchor2: String, distance: Int) {
+        val sortedAnchors = listOf(anchor1, anchor2).sorted()
+        pathDao.update(sortedAnchors[0], sortedAnchors[1], distance)
     }
 
-    suspend fun deletePath(origin: String, destination: String) {
-        pathDao.delete(origin, destination)
+    suspend fun deletePath(anchor1: String, anchor2: String) {
+        val sortedAnchors = listOf(anchor1, anchor2).sorted()
+        pathDao.delete(sortedAnchors[0], sortedAnchors[1])
     }
 
 }
