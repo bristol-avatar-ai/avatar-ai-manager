@@ -10,19 +10,21 @@
     <string name="add_exhibition_fragment_label">Add Exhibition</string>
     <string name="add_path_fragment_label">Add Path</string>
     <string name="select_path_fragment_label">Select Path</string>
-    <!--Loading Screen Fragment-->
-    <string name="message_loading" tools:ignore="TypographyEllipsis">Loading...\n</string>
-    <string name="title_network_error">Network Error</string>
-    <string name="message_network_error">Failed to download database. Please check your network connection and try again.</string>
-    <string name="button_network_error">OK</string>
-    <!--Action Bar-->
+    <!--Menu-->
     <string name="button_upload_database">Upload Database</string>
     <string name="button_refresh_database">Refresh Database</string>
-    <string name="message_upload_database">The current database will be uploaded to the server.</string>
+    <string name="button_show_anchors">Show Anchors</string>
+    <string name="button_show_features">Show Features</string>
+    <string name="message_upload_database">The database will be uploaded to the server.</string>
     <string name="button_continue">Continue</string>
     <string name="button_cancel">Cancel</string>
     <string name="message_upload_success">Upload Success</string>
     <string name="message_upload_failure">Upload Failed</string>
+    <!--Database Loading-->
+    <string name="message_loading" tools:ignore="TypographyEllipsis">Loading...\n</string>
+    <string name="title_network_error">Network Error</string>
+    <string name="message_network_error">Failed to download database. Please check your network connection and try again.</string>
+    <string name="button_network_error">OK</string>
     <!--Anchor List Fragment-->
     <string name="title_anchor_list">Cloud Anchors</string>
     <string name="header_anchor_id">Anchor ID</string>

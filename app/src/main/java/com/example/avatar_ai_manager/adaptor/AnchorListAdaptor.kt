@@ -23,7 +23,7 @@ class AnchorListAdaptor(
                     oldItem: Anchor,
                     newItem: Anchor
                 ): Boolean {
-                    return oldItem.id == newItem.id
+                    return oldItem === newItem
                 }
 
                 override fun areContentsTheSame(

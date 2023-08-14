@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <item
         android:id="@+id/action_upload"
@@ -13,5 +14,12 @@
         android:icon="@drawable/ic_refresh"
         android:title="@string/button_refresh_database"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_switch_screen"
+        app:showAsAction="ifRoom"
+        tools:icon="@drawable/ic_anchor"
+        tools:ignore="MenuTitle"
+        tools:title="@string/button_show_anchors" />
 
 </menu>

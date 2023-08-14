@@ -1,19 +1,16 @@
 package com.example.avatar_ai_manager.viewmodel
 
-import android.app.Activity
-import android.content.Context
+import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
-import android.view.View
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -21,24 +18,41 @@ import java.io.File
 
 private const val TAG = "DatabaseViewModel"
 
-private const val SNACK_BAR_DURATION = 2000
-
-class DatabaseViewModel : ViewModel() {
+class DatabaseViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class Status { LOADING, READY, ERROR }
 
-    private val _status = MutableLiveData(Status.ERROR)
+    private val databaseFile = File(
+        getApplication<Application>().applicationContext.filesDir,
+        AppDatabase.FILENAME
+    )
+
+    private val _status = MutableLiveData<Status>()
     val status: LiveData<Status> get() = _status
 
-    private var _database: AppDatabase? = null
-    private val database get() = _database!!
-    private val anchorDao get() = database.anchorDao()
-    private val featureDao get() = database.featureDao()
-    private val pathDao get() = database.pathDao()
+    private var database: AppDatabase? = null
+    private val anchorDao get() = database?.anchorDao()
+    private val featureDao get() = database?.featureDao()
+    private val pathDao get() = database?.pathDao()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            loadDatabase()
+        }
+    }
+
+    private suspend fun loadDatabase() {
+        if (database == null) {
+            _status.postValue(Status.LOADING)
+            database =
+                AppDatabase.getDatabase(getApplication<Application>().applicationContext)
+            updateStatus()
+        }
+    }
 
     private fun updateStatus() {
         _status.postValue(
-            if (_database == null) {
+            if (database == null) {
                 Status.ERROR
             } else {
                 Status.READY
@@ -46,77 +60,57 @@ class DatabaseViewModel : ViewModel() {
         )
     }
 
-    fun init(context: Context) {
-        if (_database == null) {
-            _status.postValue(Status.LOADING)
-            viewModelScope.launch(Dispatchers.IO) {
-                _database = AppDatabase.getDatabase(context)
-                updateStatus()
-            }
-        }
+    suspend fun reload() {
+        AppDatabase.close()
+        database = null
+        databaseFile.delete()
+        loadDatabase()
     }
 
-    fun reload(context: Context) {
-        AppDatabase.close()
-        _database = null
-        File(context.filesDir, AppDatabase.FILENAME).delete()
+    suspend fun uploadDatabase(): Boolean {
         _status.postValue(Status.LOADING)
-        init(context)
-    }
+        AppDatabase.close()
+        database = null
 
-    suspend fun uploadDatabase(context: Context): Boolean {
-        _status.postValue(Status.LOADING)
-        val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
-        AppDatabase.close()
-        _database = null
         var success = false
         if (databaseFile.exists()) {
             success = CloudStorageApi.uploadDatabase(databaseFile)
         }
-        _database = AppDatabase.getDatabase(context)
+        database = AppDatabase.getDatabase(getApplication<Application>().applicationContext)
         updateStatus()
         return success
     }
 
-    fun showMessage(activity: Activity, message: String) {
-        val view = activity.findViewById<View>(android.R.id.content)
-        Snackbar.make(view, message, SNACK_BAR_DURATION).show()
+    fun getAnchors(): Flow<List<Anchor>>? {
+        return anchorDao?.getAnchorsFlow()
     }
 
-    fun getAnchors(): Flow<List<Anchor>> {
-        return anchorDao.getAnchorsFlow()
-    }
-
-    fun getFeaturesAtAnchor(anchorId: String): Flow<List<Feature>> {
-        return featureDao.getFeaturesAtAnchor(anchorId)
-    }
-
-    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>> {
-        return pathDao.getPathsFromAnchor(anchorId)
+    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>>? {
+        return pathDao?.getPathsFromAnchor(anchorId)
     }
 
     suspend fun addAnchor(anchor: Anchor) {
-        anchorDao.insert(anchor)
+        anchorDao?.insert(anchor)
     }
 
     suspend fun updateAnchor(anchorId: String, description: String) {
-        anchorDao.update(anchorId, description)
+        anchorDao?.update(anchorId, description)
     }
 
     suspend fun deleteAnchor(anchorId: String) {
-        anchorDao.delete(anchorId)
+        anchorDao?.delete(anchorId)
     }
 
     suspend fun addFeature(feature: Feature) {
-        featureDao.insert(feature)
+        featureDao?.insert(feature)
     }
 
     suspend fun updateFeature(name: String, description: String) {
-        featureDao.update(name, description)
+        featureDao?.update(name, description)
     }
 
     suspend fun deleteFeature(name: String) {
-        featureDao.delete(name)
+        featureDao?.delete(name)
     }
 
     /*
@@ -132,17 +126,17 @@ class DatabaseViewModel : ViewModel() {
             )
         }
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.insert(Path(sortedAnchors[0], sortedAnchors[1], distance))
+        pathDao?.insert(Path(sortedAnchors[0], sortedAnchors[1], distance))
     }
 
     suspend fun updatePath(anchor1: String, anchor2: String, distance: Int) {
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.update(sortedAnchors[0], sortedAnchors[1], distance)
+        pathDao?.update(sortedAnchors[0], sortedAnchors[1], distance)
     }
 
     suspend fun deletePath(anchor1: String, anchor2: String) {
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.delete(sortedAnchors[0], sortedAnchors[1])
+        pathDao?.delete(sortedAnchors[0], sortedAnchors[1])
     }
 
 }

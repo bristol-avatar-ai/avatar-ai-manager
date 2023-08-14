@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Widget.Base.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/margin_between_elements</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_between_elements</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAppearance">?attr/textAppearanceHeadline5</item>
+    </style>
+
+    <style name="Widget.Base.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_between_elements</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
     <style name="Widget.List.Header" parent="Widget.MaterialComponents.TextView">
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:layout_marginTop">@dimen/title_margin</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?attr/textAppearanceOverline</item>
@@ -17,19 +32,11 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
-    <style name="Widget.List.Button" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">@dimen/margin_between_elements</item>
-        <item name="android:layout_marginBottom">@dimen/margin_between_elements</item>
-        <item name="android:tint">?attr/colorOnPrimary</item>
-    </style>
-
     <style name="Widget.List.ListItemTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">@dimen/padding_between_list_items</item>
+        <item name="android:paddingVertical">@dimen/margin_between_elements</item>
         <item name="android:textAppearance">?attr/textAppearanceBody1</item>
     </style>
 
