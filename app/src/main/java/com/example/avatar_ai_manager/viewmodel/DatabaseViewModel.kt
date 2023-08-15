@@ -13,6 +13,7 @@ import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -81,12 +82,24 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         return success
     }
 
-    fun getAnchors(): Flow<List<Anchor>>? {
-        return anchorDao?.getAnchorsFlow()
+    fun getFeatures(): Flow<List<Feature>>? {
+        return featureDao?.getFeaturesFlow()
     }
 
-    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>>? {
-        return pathDao?.getPathsFromAnchor(anchorId)
+    suspend fun addFeature(feature: Feature) {
+        featureDao?.insert(feature)
+    }
+
+    suspend fun updateFeature(name: String, description: String) {
+        featureDao?.update(name, description)
+    }
+
+    suspend fun deleteFeature(name: String) {
+        featureDao?.delete(name)
+    }
+
+    fun getAnchors(): Flow<List<Anchor>>? {
+        return anchorDao?.getAnchorsFlow()
     }
 
     suspend fun addAnchor(anchor: Anchor) {
@@ -101,16 +114,20 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         anchorDao?.delete(anchorId)
     }
 
-    suspend fun addFeature(feature: Feature) {
-        featureDao?.insert(feature)
+    fun getAnchorsWithPathCounts(): Flow<List<AnchorWithPathCount>>? {
+        return getAnchors()?.map { anchorList ->
+            anchorList.map { anchor ->
+                AnchorWithPathCount(
+                    anchor.id,
+                    anchor.description,
+                    pathDao?.countPathsFromAnchor(anchor.id) ?: 0
+                )
+            }
+        }
     }
 
-    suspend fun updateFeature(name: String, description: String) {
-        featureDao?.update(name, description)
-    }
-
-    suspend fun deleteFeature(name: String) {
-        featureDao?.delete(name)
+    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>>? {
+        return pathDao?.getPathsFromAnchor(anchorId)
     }
 
     /*

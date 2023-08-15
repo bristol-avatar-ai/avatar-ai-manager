@@ -2,5 +2,7 @@
 
 <resources>
     <dimen name="margin">16dp</dimen>
+    <dimen name="margin_title">12dp</dimen>
     <dimen name="margin_between_elements">8dp</dimen>
+    <dimen name="padding_between_list_items">12dp</dimen>
 </resources>

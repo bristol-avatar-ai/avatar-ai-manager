@@ -6,7 +6,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -14,14 +13,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "MainListFragment"
+private const val TAG = "ListWithMenuFragment"
 
 @Suppress("DEPRECATION")
-abstract class MainListFragment<T, VH : RecyclerView.ViewHolder> : ListFragment<T, VH>() {
+abstract class ListWithMenuFragment<T> : ListFragment<T>() {
 
-    data class Options(
-        val switchScreenButtonTitle: String?,
-        val switchScreenButtonIcon: Int?,
+    data class MainListOptions(
+        val switchScreenButtonTitle: String,
+        val switchScreenButtonIcon: Int,
         val onSwitchScreen: () -> Unit
     )
 
@@ -39,10 +38,10 @@ abstract class MainListFragment<T, VH : RecyclerView.ViewHolder> : ListFragment<
         setHasOptionsMenu(true)
     }
 
-    protected fun setMainListFragmentOptions(options: Options) {
-        onSwitchScreen = options.onSwitchScreen
+    protected fun setListWithMenuFragmentOptions(options: MainListOptions) {
         switchScreenButtonTitle = options.switchScreenButtonTitle
         switchScreenButtonIcon = options.switchScreenButtonIcon
+        onSwitchScreen = options.onSwitchScreen
     }
 
     @Deprecated("Deprecated in Java")
@@ -77,14 +76,14 @@ abstract class MainListFragment<T, VH : RecyclerView.ViewHolder> : ListFragment<
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_upload -> onActionUpload(item)
+            R.id.action_upload -> onActionUpload()
             R.id.action_refresh -> onActionRefresh()
             R.id.action_switch_screen -> onActionSwitchScreen()
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun onActionUpload(item: MenuItem): Boolean {
+    private fun onActionUpload(): Boolean {
         if (viewModel.status.value == DatabaseViewModel.Status.READY) {
             disableButtons()
             confirmUploadAction()

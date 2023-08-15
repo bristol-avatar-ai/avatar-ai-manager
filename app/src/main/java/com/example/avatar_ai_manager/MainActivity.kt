@@ -1,13 +1,19 @@
 package com.example.avatar_ai_manager
 
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.avatar_ai_manager.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 private const val TAG = "MainActivity"
+
+private const val SNACK_BAR_DURATION = 2000
+private const val SNACK_BAR_MAX_LINES = 1
+private const val SNACK_BAR_HEIGHT = 120
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     val binding get() = _binding!!
 
     private lateinit var navController: NavController
+
+    lateinit var snackBar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +37,11 @@ class MainActivity : AppCompatActivity() {
 
         // Set up the action bar for use with the NavController
         setupActionBarWithNavController(navController)
+
+        // Create SnackBar for displaying messages.
+        val navHostFragmentParams =
+            binding.navHostFragment.layoutParams as ViewGroup.MarginLayoutParams
+        snackBar = createSnackBar(navHostFragmentParams)
     }
 
     /*
@@ -38,4 +51,27 @@ class MainActivity : AppCompatActivity() {
         // Enable the Up button for all other fragments.
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
+    private fun createSnackBar(
+        navHostFragmentParams: ViewGroup.MarginLayoutParams
+    ): Snackbar {
+        return Snackbar.make(binding.root, "", SNACK_BAR_DURATION)
+            .addCallback(object : Snackbar.Callback() {
+
+                override fun onShown(sb: Snackbar?) {
+                    super.onShown(sb)
+                    navHostFragmentParams.bottomMargin += SNACK_BAR_HEIGHT
+                    binding.navHostFragment.layoutParams = navHostFragmentParams
+                }
+
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    navHostFragmentParams.bottomMargin -= SNACK_BAR_HEIGHT
+                    binding.navHostFragment.layoutParams = navHostFragmentParams
+                }
+
+            })
+            .setTextMaxLines(SNACK_BAR_MAX_LINES)
+    }
+
 }

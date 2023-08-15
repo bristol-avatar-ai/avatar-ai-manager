@@ -1,13 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/anchorListFragment">
-
+    app:startDestination="@id/featureListFragment">
     <fragment
-        android:id="@+id/anchorListFragment"
-        android:name="com.example.avatar_ai_manager.fragment.list.AnchorListFragment"
+        android:id="@+id/featureListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.FeatureListFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_list"/>
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_featureListFragment_to_anchorDescriptionListFragment"
+            app:destination="@id/anchorDescriptionListFragment" />
+        <argument
+            android:name="scrollPosition"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/pathListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.PathListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="scrollPosition"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/addArAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddArAnchorFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_add_ar_anchor" />
+    <fragment
+        android:id="@+id/anchorDescriptionListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.AnchorDescriptionListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_anchorDescriptionListFragment_to_anchorPathsListFragment"
+            app:destination="@id/anchorPathsListFragment"
+            app:popUpTo="@id/anchorDescriptionListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_anchorDescriptionListFragment_to_addArAnchorFragment"
+            app:destination="@id/addArAnchorFragment" />
+        <argument
+            android:name="scrollPosition"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_anchorDescriptionListFragment_to_addAnchorFragment"
+            app:destination="@id/addAnchorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/anchorPathsListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.AnchorPathsListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_anchorPathsListFragment_to_anchorDescriptionListFragment"
+            app:destination="@id/anchorDescriptionListFragment"
+            app:popUpTo="@id/anchorPathsListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_anchorPathsListFragment_to_addArAnchorFragment"
+            app:destination="@id/addArAnchorFragment" />
+        <action
+            android:id="@+id/action_anchorPathsListFragment_to_pathListFragment"
+            app:destination="@id/pathListFragment" />
+        <argument
+            android:name="scrollPosition"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddAnchorFragment"
+        android:label="AddAnchorFragment" >
+        <argument
+            android:name="scrollPosition"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_addAnchorFragment_to_anchorDescriptionListFragment"
+            app:destination="@id/anchorDescriptionListFragment"
+            app:popUpTo="@id/anchorDescriptionListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

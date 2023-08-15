@@ -14,7 +14,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/loading_message"
@@ -25,7 +26,8 @@
         app:layout_constraintEnd_toEndOf="@id/progress_bar"
         app:layout_constraintStart_toStartOf="@id/progress_bar"
         app:layout_constraintTop_toBottomOf="@id/progress_bar"
-        tools:text="@string/message_loading" />
+        tools:text="@string/message_loading"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/header_1"
@@ -49,7 +51,7 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/header_1"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/header_description" />
+        tools:text="@string/header_anchor_description" />
 
     <View
         android:id="@+id/divider"

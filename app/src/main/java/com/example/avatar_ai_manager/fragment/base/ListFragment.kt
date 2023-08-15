@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.avatar_ai_manager.R
+import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
 import com.example.avatar_ai_manager.databinding.FragmentListBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,20 +17,23 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ListFragment"
 
-abstract class ListFragment<T, VH : RecyclerView.ViewHolder> : BaseFragment() {
+abstract class ListFragment<T> : BaseFragment() {
 
-    data class Options<T, LA>(
+    data class ListOptions<T>(
         val header1Text: String,
         val header2Text: String,
-        val listAdaptor: LA,
-        val getFlowList: (() -> Flow<List<T>>?)?
+        val listAdaptor: ClickableListAdaptor<T>,
+        val getFlowList: (() -> Flow<List<T>>?)?,
+        val scrollPosition: Int
     )
 
     private var _innerBinding: FragmentListBinding? = null
     private val innerBinding get() = _innerBinding!!
 
     private var getFlowList: (() -> Flow<List<T>>?)? = null
+    private var addDatabaseObserver: (() -> Unit)? = null
     private var submitAdaptorList: Job? = null
+    private var scrollToLastPosition: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,12 +50,35 @@ abstract class ListFragment<T, VH : RecyclerView.ViewHolder> : BaseFragment() {
         innerBinding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    protected fun setListFragmentOptions(options: Options<T, ListAdapter<T, VH>>) {
+    protected fun setListFragmentOptions(options: ListOptions<T>) {
         innerBinding.header1.text = options.header1Text
         innerBinding.header2.text = options.header2Text
         innerBinding.recyclerView.adapter = options.listAdaptor
         getFlowList = options.getFlowList
-        submitAdaptorList()
+
+        // Call and then reset addDatabaseObserver if it has been queued.
+        addDatabaseObserver?.invoke()
+        addDatabaseObserver = null
+
+        scrollToLastPosition = {
+            (innerBinding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                options.scrollPosition, 0
+            )
+            scrollToLastPosition = null
+        }
+    }
+
+    /*
+    * The addDatabaseObserver() function is usually called in the
+    * onViewCreated() of BaseFragment, but here we delay it until
+    * after getFlowList has been set in setListFragmentOptions().
+     */
+    override fun addDatabaseObserver() {
+        if (getFlowList != null) {
+            super.addDatabaseObserver()
+        } else {
+            addDatabaseObserver = { super.addDatabaseObserver() }
+        }
     }
 
     override fun onDatabaseError() {
@@ -87,9 +113,14 @@ abstract class ListFragment<T, VH : RecyclerView.ViewHolder> : BaseFragment() {
         submitAdaptorList = lifecycleScope.launch(Dispatchers.Main) {
             getFlowList?.invoke()?.collect {
                 @Suppress("UNCHECKED_CAST")
-                (innerBinding.recyclerView.adapter as ListAdapter<T, VH>).submitList(it)
+                (innerBinding.recyclerView.adapter as ClickableListAdaptor<T>).submitList(it)
+                scrollToLastPosition?.invoke()
             }
         }
+    }
+
+    protected fun getScrollPosition(): Int {
+        return (innerBinding.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
     }
 
     override fun onDestroyView() {
