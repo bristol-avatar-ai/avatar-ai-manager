@@ -74,16 +74,16 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
-    protected open fun onDatabaseError() {
-        disableButtons()
-    }
-
     protected open fun onDatabaseLoading() {
         disableButtons()
     }
 
     protected open fun onDatabaseReady() {
         enableButtons()
+    }
+
+    protected open fun onDatabaseError() {
+        disableButtons()
     }
 
     protected fun setBaseFragmentOptions(options: BaseOptions) {
@@ -95,8 +95,8 @@ abstract class BaseFragment : Fragment() {
     private fun setPrimaryButton(options: BaseOptions) {
         if (options.isPrimaryButtonEnabled) {
             outerBinding.buttonPrimary.text = options.primaryButtonText
-            outerBinding.buttonPrimary.setOnClickListener {
-                options.primaryButtonOnClick?.invoke()
+            options.primaryButtonOnClick?.let {
+                outerBinding.buttonPrimary.setOnClickListener { it() }
             }
             outerBinding.buttonPrimary.visibility = View.VISIBLE
         }
@@ -105,8 +105,8 @@ abstract class BaseFragment : Fragment() {
     private fun setSecondaryButton(options: BaseOptions) {
         if (options.isSecondaryButtonEnabled) {
             outerBinding.buttonSecondary.text = options.secondaryButtonText
-            outerBinding.buttonSecondary.setOnClickListener {
-                options.secondaryButtonOnClick?.invoke()
+            options.secondaryButtonOnClick?.let {
+                outerBinding.buttonSecondary.setOnClickListener { it() }
             }
             outerBinding.buttonSecondary.visibility = View.VISIBLE
         }

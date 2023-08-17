@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -32,17 +31,25 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
     private var switchScreenButtonIcon: Int? = null
     private var onSwitchScreen: (() -> Unit)? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         // Enable custom options menu.
         setHasOptionsMenu(true)
     }
 
-    override fun onDatabaseError() {
-        super.onDatabaseError()
-        uploadMenuItem?.isEnabled = false
-        refreshMenuItem?.isEnabled = true
-        switchScreensMenuItem?.isEnabled = false
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+        uploadMenuItem = menu.findItem(R.id.action_upload)
+        refreshMenuItem = menu.findItem(R.id.action_refresh)
+        switchScreensMenuItem = menu.findItem(R.id.action_switch_screen)
+
+        switchScreensMenuItem?.title = switchScreenButtonTitle
+        switchScreenButtonIcon?.let {
+            switchScreensMenuItem?.setIcon(it)
+        }
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onDatabaseLoading() {
@@ -59,25 +66,17 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         switchScreensMenuItem?.isEnabled = true
     }
 
+    override fun onDatabaseError() {
+        super.onDatabaseError()
+        uploadMenuItem?.isEnabled = false
+        refreshMenuItem?.isEnabled = true
+        switchScreensMenuItem?.isEnabled = false
+    }
+
     protected fun setListWithMenuFragmentOptions(options: MainListOptions) {
         switchScreenButtonTitle = options.switchScreenButtonTitle
         switchScreenButtonIcon = options.switchScreenButtonIcon
         onSwitchScreen = options.onSwitchScreen
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu, menu)
-        uploadMenuItem = menu.findItem(R.id.action_upload)
-        refreshMenuItem = menu.findItem(R.id.action_refresh)
-        switchScreensMenuItem = menu.findItem(R.id.action_switch_screen)
-
-        switchScreensMenuItem?.title = switchScreenButtonTitle
-        if (switchScreenButtonIcon != null) {
-            switchScreensMenuItem?.setIcon(switchScreenButtonIcon!!)
-        }
-
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     @Deprecated("Deprecated in Java")
@@ -102,7 +101,7 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
 
     private fun confirmUploadAction() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.button_upload_database))
+            .setTitle(getString(R.string.title_upload_database))
             .setMessage(getString(R.string.message_upload_database))
             .setCancelable(false)
             .setPositiveButton(getString(R.string.button_continue)) { _, _ ->
@@ -137,7 +136,9 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
     }
 
     private fun onActionSwitchScreen(): Boolean {
-        onSwitchScreen?.invoke()
+        if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
+            onSwitchScreen?.invoke()
+        }
         return true
     }
 

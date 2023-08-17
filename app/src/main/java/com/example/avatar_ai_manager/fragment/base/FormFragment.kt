@@ -8,7 +8,6 @@ import com.example.avatar_ai_manager.databinding.FragmentFormBinding
 
 private const val TAG = "FormFragment"
 
-@Suppress("DEPRECATION")
 abstract class FormFragment : BaseFragment() {
 
     data class FormOptions(
@@ -19,6 +18,7 @@ abstract class FormFragment : BaseFragment() {
         val isSelectorEnabled: Boolean,
         val isSelectorEditable: Boolean?,
         val selectorText: String?,
+        val selectorOnClick: (() -> Unit)?,
         val isSecondaryTextFieldEnabled: Boolean,
         val isSecondaryTextFieldEditable: Boolean?,
         val secondaryTextFieldHint: String?,
@@ -50,7 +50,7 @@ abstract class FormFragment : BaseFragment() {
     private fun setPrimaryTextField(options: FormOptions) {
         if (options.isPrimaryTextFieldEnabled) {
             innerBinding.textFieldPrimary.visibility = View.VISIBLE
-            options.isPrimaryTextFieldEditable?.let { innerBinding.textFieldPrimary.isEnabled = it }
+            innerBinding.textFieldPrimary.isEnabled = options.isPrimaryTextFieldEditable ?: true
             innerBinding.textFieldPrimary.hint = options.primaryTextFieldHint
             innerBinding.textEditPrimary.setText(options.primaryTextFieldText)
         }
@@ -59,17 +59,18 @@ abstract class FormFragment : BaseFragment() {
     private fun setSelector(options: FormOptions) {
         if (options.isSelectorEnabled) {
             innerBinding.selector.visibility = View.VISIBLE
-            options.isSelectorEditable?.let { innerBinding.selector.isEnabled = it }
+            innerBinding.selector.isEnabled = options.isSelectorEditable ?: true
             innerBinding.selector.text = options.selectorText
+            options.selectorOnClick?.let {
+                innerBinding.selector.setOnClickListener { it() }
+            }
         }
     }
 
     private fun setSecondaryTextField(options: FormOptions) {
         if (options.isSecondaryTextFieldEnabled) {
             innerBinding.textFieldSecondary.visibility = View.VISIBLE
-            options.isSecondaryTextFieldEditable?.let {
-                innerBinding.textFieldSecondary.isEnabled = it
-            }
+            innerBinding.textFieldSecondary.isEnabled = options.isSecondaryTextFieldEditable ?: true
             innerBinding.textFieldSecondary.hint = options.secondaryTextFieldHint
             innerBinding.textEditSecondary.setText(options.secondaryTextFieldText)
         }
@@ -96,6 +97,13 @@ abstract class FormFragment : BaseFragment() {
 
     protected fun isSwitchChecked(): Boolean {
         return innerBinding.switchSelector.isChecked
+    }
+
+    protected fun clearFields() {
+        innerBinding.textEditPrimary.text?.clear()
+        innerBinding.selector.text = null
+        innerBinding.textEditSecondary.text?.clear()
+        innerBinding.switchSelector.isChecked = true
     }
 
     override fun onDestroyView() {

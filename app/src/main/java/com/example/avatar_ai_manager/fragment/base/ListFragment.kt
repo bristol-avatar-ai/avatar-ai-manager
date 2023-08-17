@@ -19,8 +19,6 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ListFragment"
 
-private const val LAST_SCROLL_POSITION = "lastScrollPosition"
-
 abstract class ListFragment<T> : BaseFragment() {
 
     data class ListOptions<T>(
@@ -53,21 +51,6 @@ abstract class ListFragment<T> : BaseFragment() {
         innerBinding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    protected fun setListFragmentOptions(options: ListOptions<T>) {
-        innerBinding.header1.text = options.header1Text
-        innerBinding.header2.text = options.header2Text
-        innerBinding.recyclerView.adapter = options.listAdaptor
-        getFlowList = options.getFlowList
-        if (options.navArgsScrollPosition != null && !uiStateViewModel.loadedFromNavArgs) {
-            uiStateViewModel.lastScrollPosition = options.navArgsScrollPosition
-            uiStateViewModel.loadedFromNavArgs = true
-        }
-
-        // Call and then reset addDatabaseObserver if it has been queued.
-        delayAddDatabaseObserver?.invoke()
-        delayAddDatabaseObserver = null
-    }
-
     /*
     * The addDatabaseObserver() function is usually called in the
     * onViewCreated() of BaseFragment, but here we delay it until
@@ -81,12 +64,23 @@ abstract class ListFragment<T> : BaseFragment() {
         }
     }
 
-    override fun onDatabaseError() {
-        (innerBinding.recyclerView.adapter as ListAdapter<*, *>).submitList(emptyList())
-        innerBinding.progressBar.visibility = View.INVISIBLE
-        innerBinding.loadingMessage.text = getString(R.string.message_network_error)
-        innerBinding.loadingMessage.visibility = View.VISIBLE
-        super.onDatabaseError()
+    protected fun setListFragmentOptions(options: ListOptions<T>) {
+        innerBinding.header1.text = options.header1Text
+        innerBinding.header2.text = options.header2Text
+        innerBinding.recyclerView.adapter = options.listAdaptor
+        getFlowList = options.getFlowList
+        saveNavArgsScrollPosition(options)
+
+        // Call and then reset addDatabaseObserver if it has been queued.
+        delayAddDatabaseObserver?.invoke()
+        delayAddDatabaseObserver = null
+    }
+
+    private fun saveNavArgsScrollPosition(options: ListOptions<T>) {
+        if (options.navArgsScrollPosition != null && !uiStateViewModel.loadedFromNavArgs) {
+            uiStateViewModel.lastScrollPosition = options.navArgsScrollPosition
+            uiStateViewModel.loadedFromNavArgs = true
+        }
     }
 
     override fun onDatabaseLoading() {
@@ -104,17 +98,31 @@ abstract class ListFragment<T> : BaseFragment() {
         super.onDatabaseReady()
     }
 
+    override fun onDatabaseError() {
+        (innerBinding.recyclerView.adapter as ListAdapter<*, *>).submitList(emptyList())
+        innerBinding.progressBar.visibility = View.INVISIBLE
+        innerBinding.loadingMessage.text = getString(R.string.message_network_error)
+        innerBinding.loadingMessage.visibility = View.VISIBLE
+        super.onDatabaseError()
+    }
+
     /*
     * This will not submit a list if either the database is not ready or the
     * getFlowList function has not been set.
+    *
+    * Note that _innerBinding could be null if a Flow collection happens while
+    * the Fragment is in the navigation backstack.
      */
     private fun submitAdaptorList() {
         submitAdaptorList?.cancel()
         submitAdaptorList = lifecycleScope.launch(Dispatchers.Main) {
             getFlowList?.invoke()?.collect {
-                @Suppress("UNCHECKED_CAST")
-                (innerBinding.recyclerView.adapter as ClickableListAdaptor<T>).submitList(it)
-                scrollToLastPosition()
+                // Check here that _innerBinding != null
+                _innerBinding?.let { innerBinding ->
+                    @Suppress("UNCHECKED_CAST")
+                    (innerBinding.recyclerView.adapter as ClickableListAdaptor<T>).submitList(it)
+                    scrollToLastPosition()
+                }
             }
         }
     }

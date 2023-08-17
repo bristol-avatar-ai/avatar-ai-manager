@@ -26,7 +26,14 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
         )
     }
 
-    private val editDescriptions = { _: Anchor -> }
+    private val editDescriptions = { anchor: Anchor ->
+        saveScrollPositionAndNavigate(
+            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToEditAnchorFragment(
+                anchor.id,
+                anchor.description
+            )
+        )
+    }
 
     private val showAnchorPaths: () -> Unit = {
         saveScrollPositionAndNavigate(
@@ -58,7 +65,7 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
                 listAdaptor = ClickableListAdaptor.create(
                     getColumn1Text = { it.id },
                     getColumn2Text = { it.description },
-                    onClickedPrimary = editDescriptions,
+                    onClickedPrimary = { editDescriptions(it) },
                     onClickedSecondary = null
                 ),
                 getFlowList = databaseViewModel::getAnchors,

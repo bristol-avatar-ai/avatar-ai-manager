@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,8 @@ import io.github.sceneview.math.Position
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val TAG = "AddArAnchorFragment"
 
 class AddArAnchorFragment : Fragment() {
 
@@ -212,8 +215,10 @@ class AddArAnchorFragment : Fragment() {
     private fun processCloudAnchor(anchorId: String?) {
         if (anchorId != null) {
             addAnchorToDatabase(anchorId)
+            Log.i(TAG, "Cloud Anchor Uploaded - ID: $anchorId")
         } else {
-            showSnackBar(getString(R.string.message_anchor_failed))
+            Log.e(TAG, "processCloudAnchor: Cloud Anchor Upload Failed")
+            showSnackBar(getString(R.string.message_cloud_anchor_upload_failed))
             // Navigate back to AnchorDescriptionListFragment
             findNavController().navigateUp()
         }
@@ -231,25 +236,31 @@ class AddArAnchorFragment : Fragment() {
                     databaseViewModel.addAnchor(
                         Anchor(anchorId, "")
                     )
-                    showSnackBar(getString(R.string.message_anchor_added))
                 } catch (e: SQLiteConstraintException) {
-                    showSnackBar(getString(R.string.message_duplicate_error, anchorId))
+                    databaseViewModel.updateAnchor(anchorId, "")
+                    Log.w(TAG, "Anchor Id already exists in database", e)
                 }
+                showSnackBar(getString(R.string.message_anchor_added))
             } else {
-                showSnackBar(getString(R.string.message_add_anchor_to_database_failed))
+                Log.e(TAG, "addAnchorToDatabase: database not ready")
+                showSnackBar(getString(R.string.message_anchor_insertion_failed))
             }
-            navigateBack(anchorId)
+            navigateToEditAnchorFragment(anchorId)
         }
     }
 
     /*
     * This function navigates to the edit screen of the newly added anchor.
      */
-    private suspend fun navigateBack(anchorId: String) {
+    private suspend fun navigateToEditAnchorFragment(anchorId: String) {
         // Switch back to main thread.
         withContext(Dispatchers.Main) {
-            // Navigate back
-            findNavController().navigateUp()
+            findNavController().navigate(
+                AddArAnchorFragmentDirections.actionAddArAnchorFragmentToEditAnchorFragment(
+                    anchorId,
+                    ""
+                )
+            )
         }
     }
 

@@ -1,74 +1,81 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">MVB Manager</string>
-    <!--Menu-->
+    <!-- Menu Buttons -->
     <string name="button_upload_database">Upload Database</string>
     <string name="button_refresh_database">Refresh Database</string>
     <string name="button_show_anchors">Show Anchors</string>
-    <string name="button_show_features">Show Features</string>
     <string name="button_show_paths">Show Paths</string>
-    <!--Database Upload-->
-    <string name="message_upload_database">The database will be uploaded to the server.</string>
     <string name="button_continue">Continue</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_ok">OK</string>
+    <!-- List Fragment Buttons -->
+    <string name="button_add_feature">Add Feature</string>
+    <string name="button_add_anchor">Add Anchor Reference</string>
+    <string name="button_add_ar_anchor">Add Cloud Anchor</string>
+    <string name="button_add_path">Add Path</string>
+    <!-- Modification Buttons -->
+    <string name="button_host">Host</string>
+    <string name="button_summon_avatar">Summon Avatar</string>
+    <string name="button_place_avatar">Place Avatar</string>
+    <string name="button_add">Add</string>
+    <string name="button_discard">Discard</string>
+    <string name="button_amend">Amend</string>
+    <string name="button_delete">Delete</string>
+    <!--Database Upload-->
+    <string name="title_upload_database">Upload Database</string>
+    <string name="message_upload_database">The database will be uploaded to the server.</string>
     <string name="message_upload_success">Upload Success</string>
     <string name="message_upload_failure">Upload Failed</string>
     <!--Database Load-->
     <string name="message_loading" tools:ignore="TypographyEllipsis">Loading...\n</string>
     <string name="title_network_error">Network Error</string>
     <string name="message_network_error">Failed to download database. Please check your network connection and try again.</string>
-    <string name="button_network_error">OK</string>
     <!--Feature List Fragment-->
     <string name="title_feature_list">Features</string>
     <string name="header_feature_name">Name</string>
     <string name="header_feature_description">Description</string>
-    <string name="button_add_feature">Add Feature</string>
     <!--Anchor List Fragment-->
     <string name="title_anchor_list">Cloud Anchors</string>
     <string name="header_anchor_id">Anchor ID</string>
     <string name="header_anchor_description">Description</string>
     <string name="header_anchor_path_number">Number Of Paths</string>
-    <string name="button_add_anchor">Add Anchor Reference</string>
-    <string name="button_add_ar_anchor">Add Cloud Anchor</string>
     <!--Path List Fragment-->
     <string name="title_path_list">Paths From: %s</string>
     <string name="header_path_destination">Destination</string>
     <string name="header_path_distance">Distance</string>
-    <string name="button_add_path">Add Path</string>
-    <!--Edit Fragment-->
-    <string name="title_anchor_id">Anchor: %s</string>
-    <string name="title_exhibition_name">Exhibition: %s</string>
+    <!-- Add/Edit Fields -->
+    <string name="field_name">Name</string>
     <string name="field_description">Description</string>
-    <string name="button_amend">Amend</string>
-    <string name="button_delete">Delete</string>
-    <string name="message_description_amended">Description Amended</string>
-    <string name="message_anchor_deleted">Anchor Deleted</string>
-    <string name="message_exhibition_deleted">Exhibition Deleted</string>
-    <!--Edit Path Fragment-->
-    <string name="title_origin">Origin: %s</string>
+    <string name="field_primary_feature">Primary Feature</string>
+    <string name="field_anchor_id">Anchor ID</string>
+    <string name="field_origin">Origin</string>
+    <string name="field_select_destination">Select Destination</string>
     <string name="field_destination">Destination: %s</string>
     <string name="field_distance">Distance</string>
-    <string name="message_path_amended">Path Amended</string>
-    <string name="message_path_deleted">Path Deleted</string>
-    <!-- Add Feature Fragment -->
-    <string name="field_name">Name</string>
-    <string name="button_add">Add</string>
-    <string name="button_discard">Discard</string>
-    <string name="switch_primary_feature">Primary Feature</string>
-    <string name="message_exhibition_added">Exhibition Added</string>
-    <string name="message_exhibition_discarded">Exhibition Discarded</string>
-    <string name="message_duplicate_error">Addition Failed: %s already exists!</string>
-    <!-- Add Anchor Fragment -->
-    <string name="title_add_anchor">New Anchor</string>
-    <string name="button_host">Host</string>
-    <string name="field_anchor_id">Anchor ID</string>
-    <string name="button_summon_avatar">Summon Avatar</string>
-    <string name="button_place_avatar">Place Avatar</string>
+    <!-- Add/Edit Common Messages -->
+    <string name="message_changes_discarded">Changes Discarded</string>
+    <string name="message_duplicate_error">Failed: %s already exists!</string>
+    <!-- Add/Edit Feature Fragment -->
+    <string name="title_new_feature">New Feature</string>
+    <string name="title_edit_feature">Edit Feature</string>
+    <string name="message_feature_added">Feature Added</string>
+    <string name="message_feature_discarded">Feature Discarded</string>
+    <string name="message_feature_updated">Feature Updated</string>
+    <string name="message_feature_deleted">Feature Deleted</string>
+    <!-- Add/Edit Anchor Fragment -->
+    <string name="title_new_anchor">New Anchor</string>
+    <string name="title_edit_anchor">Edit Anchor</string>
     <string name="message_anchor_added">Anchor Added</string>
-    <string name="message_anchor_failed">Failed To Add Anchor</string>
-    <string name="message_add_anchor_to_database_failed">Cloud Anchor Added; Database Insertion Failed</string>
     <string name="message_anchor_discarded">Anchor Discarded</string>
-    <!--Add Path Fragment-->
-    <string name="selector_destination">Select Destination</string>
+    <string name="message_anchor_updated">Anchor Updated</string>
+    <string name="message_anchor_deleted">Anchor Deleted</string>
+    <string name="message_cloud_anchor_upload_failed">Cloud Anchor Upload Failed</string>
+    <string name="message_anchor_insertion_failed">Cloud Anchor Uploaded; Database Insertion Failed</string>
+    <!--Add/Edit Path Fragment-->
+    <string name="title_new_path">New Path</string>
+    <string name="title_edit_path">Edit Path</string>
     <string name="message_path_added">Path Added</string>
     <string name="message_path_discarded">Path Discarded</string>
+    <string name="message_path_updates">Path Updated</string>
+    <string name="message_path_deleted">Path Deleted</string>
 </resources>
