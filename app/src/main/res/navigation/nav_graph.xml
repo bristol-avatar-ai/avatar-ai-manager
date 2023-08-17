@@ -21,6 +21,9 @@
         <argument
             android:name="originId"
             app:argType="string" />
+        <argument
+            android:name="originName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addArAnchorFragment"
@@ -94,7 +97,7 @@
             android:name="anchorId"
             app:argType="string" />
         <argument
-            android:name="description"
+            android:name="name"
             app:argType="string" />
     </fragment>
 </navigation>

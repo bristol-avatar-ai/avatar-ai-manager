@@ -26,7 +26,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/selector"
             style="@style/Widget.Form.Selector"
-            tools:text="@string/selector_destination"
+            tools:text="@string/field_select_destination"
             tools:visibility="visible" />
 
         <com.google.android.material.textfield.TextInputLayout

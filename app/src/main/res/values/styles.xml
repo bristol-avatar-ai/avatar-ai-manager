@@ -47,7 +47,7 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="Widget.Form.TextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.Form.TextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">@dimen/margin_between_elements</item>

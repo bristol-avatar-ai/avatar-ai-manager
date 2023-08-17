@@ -16,8 +16,8 @@ private const val TAG = "AddAnchorFragment"
 
 class AddAnchorFragment : FormFragment() {
 
-    private val anchorId get() = getPrimaryFieldText()
-    private val anchorDescription get() = getSecondaryFieldText()
+    private val anchorName get() = getPrimaryFieldText()
+    private val anchorId get() = getSecondaryFieldText()
 
     private val discardAnchor: () -> Unit = {
         showSnackBar(getString(R.string.message_anchor_discarded))
@@ -28,7 +28,7 @@ class AddAnchorFragment : FormFragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 databaseViewModel.addAnchor(
-                    Anchor(anchorId, anchorDescription)
+                    Anchor(anchorId, anchorName)
                 )
                 withContext(Dispatchers.Main) {
                     showSnackBar(getString(R.string.message_anchor_added))
@@ -58,7 +58,7 @@ class AddAnchorFragment : FormFragment() {
             FormOptions(
                 isPrimaryTextFieldEnabled = true,
                 isPrimaryTextFieldEditable = true,
-                primaryTextFieldHint = getString(R.string.field_anchor_id),
+                primaryTextFieldHint = getString(R.string.field_name),
                 primaryTextFieldText = null,
                 isSelectorEnabled = false,
                 isSelectorEditable = null,
@@ -66,7 +66,7 @@ class AddAnchorFragment : FormFragment() {
                 selectorOnClick = null,
                 isSecondaryTextFieldEnabled = true,
                 isSecondaryTextFieldEditable = true,
-                secondaryTextFieldHint = getString(R.string.field_description),
+                secondaryTextFieldHint = getString(R.string.field_anchor_id),
                 secondaryTextFieldText = null,
                 isSwitchEnabled = false,
                 switchText = null
@@ -76,7 +76,7 @@ class AddAnchorFragment : FormFragment() {
     }
 
     override fun onDestroyView() {
-        if (anchorId.isNotEmpty() || anchorDescription.isNotEmpty()) {
+        if (anchorId.isNotEmpty() || anchorName.isNotEmpty()) {
             showSnackBar(getString(R.string.message_anchor_discarded))
         }
         super.onDestroyView()

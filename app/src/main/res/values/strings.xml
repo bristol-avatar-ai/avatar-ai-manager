@@ -37,10 +37,10 @@
     <!--Anchor List Fragment-->
     <string name="title_anchor_list">Cloud Anchors</string>
     <string name="header_anchor_id">Anchor ID</string>
-    <string name="header_anchor_description">Description</string>
-    <string name="header_anchor_path_number">Number Of Paths</string>
+    <string name="header_anchor_name">Name</string>
+    <string name="header_anchor_path_number">Paths</string>
     <!--Path List Fragment-->
-    <string name="title_path_list">Paths From: %s</string>
+    <string name="title_path_list">Origin: %s</string>
     <string name="header_path_destination">Destination</string>
     <string name="header_path_distance">Distance</string>
     <!-- Add/Edit Fields -->

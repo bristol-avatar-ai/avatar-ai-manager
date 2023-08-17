@@ -13,6 +13,8 @@ import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.example.avatar_ai_manager.DatabaseApplication
+import com.example.avatar_ai_manager.data.AnchorWithPathCount
+import com.example.avatar_ai_manager.data.PathWithNames
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -120,8 +122,8 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         anchorDao?.insert(anchor)
     }
 
-    suspend fun updateAnchor(anchorId: String, description: String) {
-        anchorDao?.update(anchorId, description)
+    suspend fun updateAnchor(anchorId: String, name: String) {
+        anchorDao?.update(anchorId, name)
     }
 
     suspend fun deleteAnchor(anchorId: String) {
@@ -133,15 +135,38 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
             anchorList.map { anchor ->
                 AnchorWithPathCount(
                     anchor.id,
-                    anchor.description,
+                    anchor.name,
                     pathDao?.countPathsFromAnchor(anchor.id) ?: 0
                 )
             }
         }
     }
 
-    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>>? {
-        return pathDao?.getPathsFromAnchor(anchorId)
+    fun getPathsWithNamesFromAnchor(anchorId: String): Flow<List<PathWithNames>>? {
+        return pathDao?.getPathsFromAnchor(anchorId)?.map { pathList ->
+            val originName = anchorDao?.getAnchor(anchorId)?.name.toString()
+            pathList.map { path ->
+                PathWithNames(
+                    path.anchor1,
+                    getAnchorName(path.anchor1, anchorId, originName),
+                    path.anchor2,
+                    getAnchorName(path.anchor2, anchorId, originName),
+                    path.distance
+                )
+            }
+        }
+    }
+
+    private suspend fun getAnchorName(
+        anchorId: String,
+        originId: String,
+        originName: String
+    ): String {
+        return if (anchorId == originId) {
+            originName
+        } else {
+            anchorDao?.getAnchor(anchorId)?.name.toString()
+        }
     }
 
     /*

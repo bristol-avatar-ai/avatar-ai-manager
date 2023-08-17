@@ -17,7 +17,7 @@ class EditAnchorFragment : FormFragment() {
 
     private val args: EditAnchorFragmentArgs by navArgs()
 
-    private val anchorDescription get() = getSecondaryFieldText()
+    private val anchorName get() = getPrimaryFieldText()
 
     private val deleteAnchor: () -> Unit = {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -32,7 +32,7 @@ class EditAnchorFragment : FormFragment() {
 
     private val updateAnchor: () -> Unit = {
         lifecycleScope.launch(Dispatchers.IO) {
-            databaseViewModel.updateAnchor(args.anchorId, anchorDescription)
+            databaseViewModel.updateAnchor(args.anchorId, anchorName)
 
             withContext(Dispatchers.Main) {
                 showSnackBar(getString(R.string.message_anchor_updated))
@@ -57,17 +57,17 @@ class EditAnchorFragment : FormFragment() {
         setFormFragmentOptions(
             FormOptions(
                 isPrimaryTextFieldEnabled = true,
-                isPrimaryTextFieldEditable = false,
-                primaryTextFieldHint = getString(R.string.field_anchor_id),
-                primaryTextFieldText = args.anchorId,
+                isPrimaryTextFieldEditable = true,
+                primaryTextFieldHint = getString(R.string.field_name),
+                primaryTextFieldText = args.name,
                 isSelectorEnabled = false,
                 isSelectorEditable = null,
                 selectorText = null,
                 selectorOnClick = null,
                 isSecondaryTextFieldEnabled = true,
-                isSecondaryTextFieldEditable = true,
-                secondaryTextFieldHint = getString(R.string.field_description),
-                secondaryTextFieldText = args.description,
+                isSecondaryTextFieldEditable = false,
+                secondaryTextFieldHint = getString(R.string.field_anchor_id),
+                secondaryTextFieldText = args.anchorId,
                 isSwitchEnabled = false,
                 switchText = null
             )
@@ -76,7 +76,7 @@ class EditAnchorFragment : FormFragment() {
     }
 
     override fun onDestroyView() {
-        if(anchorDescription != args.description){
+        if (anchorName != args.name) {
             showSnackBar(getString(R.string.message_changes_discarded))
         }
         super.onDestroyView()

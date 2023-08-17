@@ -30,7 +30,7 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
         saveScrollPositionAndNavigate(
             AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToEditAnchorFragment(
                 anchor.id,
-                anchor.description
+                anchor.name
             )
         )
     }
@@ -60,11 +60,11 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
 
         setListFragmentOptions(
             ListOptions(
-                header1Text = getString(R.string.header_anchor_id),
-                header2Text = getString(R.string.header_anchor_description),
+                header1Text = getString(R.string.header_anchor_name),
+                header2Text = getString(R.string.header_anchor_id),
                 listAdaptor = ClickableListAdaptor.create(
-                    getColumn1Text = { it.id },
-                    getColumn2Text = { it.description },
+                    getColumn1Text = { it.name },
+                    getColumn2Text = { it.id },
                     onClickedPrimary = { editDescriptions(it) },
                     onClickedSecondary = null
                 ),
@@ -75,9 +75,9 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
 
         setListWithMenuFragmentOptions(
             MainListOptions(
-                onSwitchScreen = showAnchorPaths,
                 switchScreenButtonTitle = getString(R.string.button_show_paths),
-                switchScreenButtonIcon = R.drawable.ic_path
+                switchScreenButtonIcon = R.drawable.ic_path,
+                onSwitchScreen = showAnchorPaths
             )
         )
 

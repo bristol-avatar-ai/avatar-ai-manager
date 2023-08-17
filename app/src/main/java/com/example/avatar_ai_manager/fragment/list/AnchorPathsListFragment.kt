@@ -5,8 +5,8 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
+import com.example.avatar_ai_manager.data.AnchorWithPathCount
 import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
-import com.example.avatar_ai_manager.viewmodel.AnchorWithPathCount
 
 private const val TAG = "AnchorPathsListFragment"
 
@@ -28,7 +28,10 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
     private val showPathsList = { anchor: AnchorWithPathCount ->
         saveScrollPositionAndNavigate(
-            AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToPathListFragment(anchor.id)
+            AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToPathListFragment(
+                anchor.id,
+                anchor.name
+            )
         )
     }
 
@@ -57,10 +60,10 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
         setListFragmentOptions(
             ListOptions(
-                header1Text = getString(R.string.header_anchor_id),
+                header1Text = getString(R.string.header_anchor_name),
                 header2Text = getString(R.string.header_anchor_path_number),
                 listAdaptor = ClickableListAdaptor.create(
-                    getColumn1Text = { it.id },
+                    getColumn1Text = { it.name },
                     getColumn2Text = { it.pathCount.toString() },
                     onClickedPrimary = showPathsList,
                     onClickedSecondary = null
@@ -72,9 +75,9 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
         setListWithMenuFragmentOptions(
             MainListOptions(
-                onSwitchScreen = showAnchorDescriptions,
                 switchScreenButtonTitle = getString(R.string.button_show_anchors),
-                switchScreenButtonIcon = R.drawable.ic_anchor
+                switchScreenButtonIcon = R.drawable.ic_anchor,
+                onSwitchScreen = showAnchorDescriptions
             )
         )
 
