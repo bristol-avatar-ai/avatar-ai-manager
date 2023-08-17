@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.avatar_ai_manager.MainActivity
 import com.example.avatar_ai_manager.databinding.FragmentBaseBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -45,11 +44,8 @@ abstract class BaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialise DatabaseViewModel
-        viewModel = ViewModelProvider(
-            this,
-            DatabaseViewModelFactory(requireActivity().application)
-        )[DatabaseViewModel::class.java]
+        // Get DatabaseViewModel from MainActivity.
+        viewModel = ViewModelProvider(requireActivity())[DatabaseViewModel::class.java]
         addDatabaseObserver()
     }
 
@@ -118,13 +114,13 @@ abstract class BaseFragment : Fragment() {
         outerBinding.buttonSecondary.isEnabled = false
     }
 
+    protected fun showSnackBar(message: String) {
+        (requireActivity() as MainActivity).snackBar.setText(message).show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _outerBinding = null
-    }
-
-    protected fun showSnackBar(message: String) {
-        (requireActivity() as MainActivity).snackBar.setText(message).show()
     }
 
 }
