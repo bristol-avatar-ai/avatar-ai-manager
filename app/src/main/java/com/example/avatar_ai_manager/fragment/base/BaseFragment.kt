@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.avatar_ai_manager.MainActivity
 import com.example.avatar_ai_manager.databinding.FragmentBaseBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.viewmodel.DatabaseViewModelFactory
+import com.example.avatar_ai_manager.viewmodel.UiStateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,7 +33,9 @@ abstract class BaseFragment : Fragment() {
     private var _outerBinding: FragmentBaseBinding? = null
     protected val outerBinding get() = _outerBinding!!
 
-    protected lateinit var viewModel: DatabaseViewModel
+    protected lateinit var databaseViewModel: DatabaseViewModel
+
+    protected val uiStateViewModel: UiStateViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,13 +49,16 @@ abstract class BaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Get DatabaseViewModel from MainActivity.
-        viewModel = ViewModelProvider(requireActivity())[DatabaseViewModel::class.java]
+        // Initialise DatabaseViewModel
+        databaseViewModel = ViewModelProvider(
+            requireActivity(),
+            DatabaseViewModelFactory(requireActivity().application)
+        )[DatabaseViewModel::class.java]
         addDatabaseObserver()
     }
 
     protected open fun addDatabaseObserver() {
-        viewModel.status.observe(viewLifecycleOwner) {
+        databaseViewModel.status.observe(viewLifecycleOwner) {
             when (it) {
                 null -> onDatabaseNull()
                 DatabaseViewModel.Status.ERROR -> onDatabaseError()
@@ -62,7 +70,7 @@ abstract class BaseFragment : Fragment() {
 
     private fun onDatabaseNull() {
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.reload()
+            databaseViewModel.reload()
         }
     }
 

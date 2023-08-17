@@ -3,13 +3,10 @@ package com.example.avatar_ai_manager
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.avatar_ai_manager.databinding.ActivityMainBinding
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 
 private const val TAG = "MainActivity"
@@ -25,25 +22,19 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
-    private lateinit var viewModel: DatabaseViewModel
-
     lateinit var snackBar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialise ViewModel.
-        viewModel = ViewModelProvider(
-            this,
-            DatabaseViewModelFactory(application)
-        )[DatabaseViewModel::class.java]
-
         // Retrieve NavController from the NavHostFragment
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+
         // Set up the action bar for use with the NavController
         setupActionBarWithNavController(navController)
 

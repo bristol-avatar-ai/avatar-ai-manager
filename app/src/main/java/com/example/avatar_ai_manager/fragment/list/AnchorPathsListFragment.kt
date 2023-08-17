@@ -2,7 +2,6 @@ package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
@@ -16,25 +15,27 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
     private val args: AnchorPathsListFragmentArgs by navArgs()
 
     private val addArAnchor = {
-        findNavController().navigate(
+        saveScrollPositionAndNavigate(
             AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToAddArAnchorFragment()
         )
     }
 
     private val addAnchorReference = {
-
+        saveScrollPositionAndNavigate(
+            AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToAddAnchorFragment()
+        )
     }
 
     private val showPathsList = { anchor: AnchorWithPathCount ->
-        findNavController().navigate(
+        saveScrollPositionAndNavigate(
             AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToPathListFragment(anchor.id)
         )
     }
 
     private val showAnchorDescriptions = {
-        findNavController().navigate(
+        saveScrollPositionAndNavigate(
             AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToAnchorDescriptionListFragment(
-                getScrollPosition()
+                getScrollPosition().toString()
             )
         )
     }
@@ -64,8 +65,8 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
                     onClickedPrimary = showPathsList,
                     onClickedSecondary = null
                 ),
-                getFlowList = viewModel::getAnchorsWithPathCounts,
-                scrollPosition = args.scrollPosition
+                getFlowList = databaseViewModel::getAnchorsWithPathCounts,
+                navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
             )
         )
 

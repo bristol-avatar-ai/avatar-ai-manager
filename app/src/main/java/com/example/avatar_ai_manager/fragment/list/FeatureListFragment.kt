@@ -2,8 +2,6 @@ package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
@@ -12,8 +10,6 @@ import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
 private const val TAG = "FeatureListFragment"
 
 class FeatureListFragment : ListWithMenuFragment<Feature>() {
-
-    private val args: FeatureListFragmentArgs by navArgs()
 
     private val addFeature = {
 
@@ -24,8 +20,8 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
     }
 
     private val showAnchorDescriptions = {
-        findNavController().navigate(
-            FeatureListFragmentDirections.actionFeatureListFragmentToAnchorDescriptionListFragment()
+        saveScrollPositionAndNavigate(
+            FeatureListFragmentDirections.actionFeatureListFragmentToAnchorDescriptionListFragment(null)
         )
     }
 
@@ -54,8 +50,8 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
                     onClickedPrimary = onFeatureClicked,
                     onClickedSecondary = null
                 ),
-                getFlowList = viewModel::getFeatures,
-                scrollPosition = args.scrollPosition
+                getFlowList = databaseViewModel::getFeatures,
+                navArgsScrollPosition = null
             )
         )
 

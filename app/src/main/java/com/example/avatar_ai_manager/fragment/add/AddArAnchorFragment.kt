@@ -34,7 +34,7 @@ class AddArAnchorFragment : Fragment() {
     private var _binding: FragmentAddArAnchorBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
+    private val databaseViewModel: DatabaseViewModel by activityViewModels()
 
     private lateinit var sceneView: ArSceneView
     private lateinit var avatarButton: ExtendedFloatingActionButton
@@ -226,9 +226,9 @@ class AddArAnchorFragment : Fragment() {
     private fun addAnchorToDatabase(anchorId: String) {
         // Add anchor to database in IO thread.
         lifecycleScope.launch(Dispatchers.IO) {
-            if (viewModel.status.value == DatabaseViewModel.Status.READY) {
+            if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
                 try {
-                    viewModel.addAnchor(
+                    databaseViewModel.addAnchor(
                         Anchor(anchorId, "")
                     )
                     showSnackBar(getString(R.string.message_anchor_added))

@@ -2,6 +2,7 @@ package com.example.avatar_ai_manager.viewmodel
 
 import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
+import com.example.avatar_ai_manager.DatabaseApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,30 +30,43 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
     private val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
 
     private val _status = MutableLiveData<Status>()
+
     val status: LiveData<Status> get() = _status
 
-    private var database: AppDatabase? = null
+    private var database
+        get() = getApplication<DatabaseApplication>().database
+        set(value) {
+            getApplication<DatabaseApplication>().database = value
+        }
     private val anchorDao get() = database?.anchorDao()
     private val featureDao get() = database?.featureDao()
     private val pathDao get() = database?.pathDao()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            loadDatabase()
+            load()
         }
     }
 
-    private suspend fun loadDatabase() {
-        if (database == null) {
-            _status.postValue(Status.LOADING)
-            database =
-                AppDatabase.getDatabase(context)
-            updateStatus()
+    private fun postStatus(status: Status) {
+        if (status == Status.ERROR) {
+            Log.w(TAG, "Status: $status")
+        } else {
+            Log.i(TAG, "Status: $status")
         }
+        _status.postValue(status)
+    }
+
+    private suspend fun load() {
+        if (database == null) {
+            postStatus(Status.LOADING)
+            database = AppDatabase.getDatabase(context)
+        }
+        updateStatus()
     }
 
     private fun updateStatus() {
-        _status.postValue(
+        postStatus(
             if (database == null) {
                 Status.ERROR
             } else {
@@ -64,11 +79,11 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         AppDatabase.close()
         database = null
         databaseFile.delete()
-        loadDatabase()
+        load()
     }
 
-    suspend fun uploadDatabase(): Boolean {
-        _status.postValue(Status.LOADING)
+    suspend fun upload(): Boolean {
+        postStatus(Status.LOADING)
         AppDatabase.close()
         database = null
 

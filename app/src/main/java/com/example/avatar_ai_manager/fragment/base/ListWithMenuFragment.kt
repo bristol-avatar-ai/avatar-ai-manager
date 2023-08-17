@@ -38,6 +38,27 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         setHasOptionsMenu(true)
     }
 
+    override fun onDatabaseError() {
+        super.onDatabaseError()
+        uploadMenuItem?.isEnabled = false
+        refreshMenuItem?.isEnabled = true
+        switchScreensMenuItem?.isEnabled = false
+    }
+
+    override fun onDatabaseLoading() {
+        super.onDatabaseLoading()
+        uploadMenuItem?.isEnabled = false
+        refreshMenuItem?.isEnabled = false
+        switchScreensMenuItem?.isEnabled = false
+    }
+
+    override fun onDatabaseReady() {
+        super.onDatabaseReady()
+        uploadMenuItem?.isEnabled = true
+        refreshMenuItem?.isEnabled = true
+        switchScreensMenuItem?.isEnabled = true
+    }
+
     protected fun setListWithMenuFragmentOptions(options: MainListOptions) {
         switchScreenButtonTitle = options.switchScreenButtonTitle
         switchScreenButtonIcon = options.switchScreenButtonIcon
@@ -59,20 +80,6 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun disableButtons() {
-        super.disableButtons()
-        uploadMenuItem?.isEnabled = false
-        refreshMenuItem?.isEnabled = false
-        switchScreensMenuItem?.isEnabled = false
-    }
-
-    override fun enableButtons() {
-        super.enableButtons()
-        uploadMenuItem?.isEnabled = true
-        refreshMenuItem?.isEnabled = true
-        switchScreensMenuItem?.isEnabled = true
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -84,7 +91,7 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
     }
 
     private fun onActionUpload(): Boolean {
-        if (viewModel.status.value == DatabaseViewModel.Status.READY) {
+        if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
             disableButtons()
             confirmUploadAction()
         } else {
@@ -99,7 +106,7 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
             .setMessage(getString(R.string.message_upload_database))
             .setCancelable(false)
             .setPositiveButton(getString(R.string.button_continue)) { _, _ ->
-                uploadDatabase()
+                upload()
             }
             .setNegativeButton(getString(R.string.button_cancel)) { _, _ ->
                 enableButtons()
@@ -107,9 +114,9 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
             .show()
     }
 
-    private fun uploadDatabase() {
+    private fun upload() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (viewModel.uploadDatabase()) {
+            if (databaseViewModel.upload()) {
                 showSnackBar(getString(R.string.message_upload_success))
             } else {
                 showSnackBar(getString(R.string.message_upload_failure))
@@ -121,13 +128,9 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
     }
 
     private fun onActionRefresh(): Boolean {
-        if (viewModel.status.value != DatabaseViewModel.Status.LOADING) {
-            disableButtons()
+        if (databaseViewModel.status.value != DatabaseViewModel.Status.LOADING) {
             lifecycleScope.launch(Dispatchers.IO) {
-                viewModel.reload()
-                withContext(Dispatchers.Main) {
-                    enableButtons()
-                }
+                databaseViewModel.reload()
             }
         }
         return true

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.example.avatar_ai_manager.R
@@ -17,6 +19,8 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ListFragment"
 
+private const val LAST_SCROLL_POSITION = "lastScrollPosition"
+
 abstract class ListFragment<T> : BaseFragment() {
 
     data class ListOptions<T>(
@@ -24,16 +28,15 @@ abstract class ListFragment<T> : BaseFragment() {
         val header2Text: String,
         val listAdaptor: ClickableListAdaptor<T>,
         val getFlowList: (() -> Flow<List<T>>?)?,
-        val scrollPosition: Int
+        val navArgsScrollPosition: Int?
     )
 
     private var _innerBinding: FragmentListBinding? = null
     private val innerBinding get() = _innerBinding!!
 
     private var getFlowList: (() -> Flow<List<T>>?)? = null
-    private var addDatabaseObserver: (() -> Unit)? = null
+    private var delayAddDatabaseObserver: (() -> Unit)? = null
     private var submitAdaptorList: Job? = null
-    private var scrollToLastPosition: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,17 +58,14 @@ abstract class ListFragment<T> : BaseFragment() {
         innerBinding.header2.text = options.header2Text
         innerBinding.recyclerView.adapter = options.listAdaptor
         getFlowList = options.getFlowList
+        if (options.navArgsScrollPosition != null && !uiStateViewModel.loadedFromNavArgs) {
+            uiStateViewModel.lastScrollPosition = options.navArgsScrollPosition
+            uiStateViewModel.loadedFromNavArgs = true
+        }
 
         // Call and then reset addDatabaseObserver if it has been queued.
-        addDatabaseObserver?.invoke()
-        addDatabaseObserver = null
-
-        scrollToLastPosition = {
-            (innerBinding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                options.scrollPosition, 0
-            )
-            scrollToLastPosition = null
-        }
+        delayAddDatabaseObserver?.invoke()
+        delayAddDatabaseObserver = null
     }
 
     /*
@@ -77,7 +77,7 @@ abstract class ListFragment<T> : BaseFragment() {
         if (getFlowList != null) {
             super.addDatabaseObserver()
         } else {
-            addDatabaseObserver = { super.addDatabaseObserver() }
+            delayAddDatabaseObserver = { super.addDatabaseObserver() }
         }
     }
 
@@ -114,9 +114,22 @@ abstract class ListFragment<T> : BaseFragment() {
             getFlowList?.invoke()?.collect {
                 @Suppress("UNCHECKED_CAST")
                 (innerBinding.recyclerView.adapter as ClickableListAdaptor<T>).submitList(it)
-                scrollToLastPosition?.invoke()
+                scrollToLastPosition()
             }
         }
+    }
+
+    private fun scrollToLastPosition() {
+        uiStateViewModel.lastScrollPosition?.let { position ->
+            (innerBinding.recyclerView.layoutManager as LinearLayoutManager)
+                .scrollToPositionWithOffset(position, 0)
+            uiStateViewModel.lastScrollPosition = null
+        }
+    }
+
+    protected fun saveScrollPositionAndNavigate(directions: NavDirections) {
+        uiStateViewModel.lastScrollPosition = getScrollPosition()
+        findNavController().navigate(directions)
     }
 
     protected fun getScrollPosition(): Int {

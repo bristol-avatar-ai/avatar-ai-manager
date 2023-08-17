@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.navigation.fragment.findNavController
 import com.example.avatar_ai_manager.databinding.FragmentFormBinding
 
 private const val TAG = "FormFragment"
@@ -14,7 +12,6 @@ private const val TAG = "FormFragment"
 abstract class FormFragment : BaseFragment() {
 
     data class FormOptions(
-        val onBackPressed: (() -> Unit),
         val isPrimaryTextFieldEnabled: Boolean,
         val isPrimaryTextFieldEditable: Boolean?,
         val primaryTextFieldHint: String?,
@@ -33,8 +30,6 @@ abstract class FormFragment : BaseFragment() {
     private var _innerBinding: FragmentFormBinding? = null
     private val innerBinding get() = _innerBinding!!
 
-    private var onBackPressed: (() -> Unit)? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,21 +40,7 @@ abstract class FormFragment : BaseFragment() {
         return outerBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                onBackPressed?.invoke()
-                findNavController().navigateUp()
-            }
-        }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
-    }
-
     protected fun setFormFragmentOptions(options: FormOptions) {
-        onBackPressed = options.onBackPressed
         setPrimaryTextField(options)
         setSelector(options)
         setSecondaryTextField(options)

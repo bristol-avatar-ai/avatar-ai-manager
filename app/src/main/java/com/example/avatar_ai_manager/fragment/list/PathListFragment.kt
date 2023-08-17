@@ -42,8 +42,8 @@ class PathListFragment : ListFragment<Path>() {
                     onClickedPrimary = editPath,
                     onClickedSecondary = null
                 ),
-                getFlowList = { viewModel.getPathsFromAnchor(args.originId) },
-                scrollPosition = args.scrollPosition
+                getFlowList = { databaseViewModel.getPathsFromAnchor(args.originId) },
+                navArgsScrollPosition = null
             )
         )
 

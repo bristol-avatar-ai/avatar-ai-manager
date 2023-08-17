@@ -2,22 +2,12 @@ package com.example.avatar_ai_manager.fragment.add
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.fragment.base.FormFragment
 
 private const val TAG = "AddAnchorFragment"
 
 class AddAnchorFragment : FormFragment() {
-
-    private val args: AddAnchorFragmentArgs by navArgs()
-
-    private val showAnchorDescriptions = {
-        findNavController().navigate(
-            AddAnchorFragmentDirections.actionAddAnchorFragmentToAnchorDescriptionListFragment(args.scrollPosition)
-        )
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +25,6 @@ class AddAnchorFragment : FormFragment() {
 
         setFormFragmentOptions(
             FormOptions(
-                onBackPressed = showAnchorDescriptions,
                 isPrimaryTextFieldEnabled = true,
                 isPrimaryTextFieldEditable = true,
                 primaryTextFieldHint = getString(R.string.field_anchor_id),

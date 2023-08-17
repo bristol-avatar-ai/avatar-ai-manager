@@ -2,7 +2,6 @@ package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.R
@@ -16,25 +15,23 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
     private val args: AnchorDescriptionListFragmentArgs by navArgs()
 
     private val addArAnchor = {
-        findNavController().navigate(
+        saveScrollPositionAndNavigate(
             AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAddArAnchorFragment()
         )
     }
 
     private val addAnchorReference = {
-        findNavController().navigate(
-            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAddAnchorFragment(
-                getScrollPosition()
-            )
+        saveScrollPositionAndNavigate(
+            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAddAnchorFragment()
         )
     }
 
     private val editDescriptions = { _: Anchor -> }
 
     private val showAnchorPaths: () -> Unit = {
-        findNavController().navigate(
+        saveScrollPositionAndNavigate(
             AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAnchorPathsListFragment(
-                getScrollPosition()
+                getScrollPosition().toString()
             )
         )
     }
@@ -64,8 +61,8 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
                     onClickedPrimary = editDescriptions,
                     onClickedSecondary = null
                 ),
-                getFlowList = viewModel::getAnchors,
-                scrollPosition = args.scrollPosition
+                getFlowList = databaseViewModel::getAnchors,
+                navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
             )
         )
 
