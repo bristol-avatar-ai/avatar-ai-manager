@@ -23,10 +23,9 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
 
     enum class Status { LOADING, READY, ERROR }
 
-    private val databaseFile = File(
-        getApplication<Application>().applicationContext.filesDir,
-        AppDatabase.FILENAME
-    )
+    private val context get() = getApplication<Application>().applicationContext
+
+    private val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
 
     private val _status = MutableLiveData<Status>()
     val status: LiveData<Status> get() = _status
@@ -46,7 +45,7 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         if (database == null) {
             _status.postValue(Status.LOADING)
             database =
-                AppDatabase.getDatabase(getApplication<Application>().applicationContext)
+                AppDatabase.getDatabase(context)
             updateStatus()
         }
     }
@@ -77,7 +76,7 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         if (databaseFile.exists()) {
             success = CloudStorageApi.uploadDatabase(databaseFile)
         }
-        database = AppDatabase.getDatabase(getApplication<Application>().applicationContext)
+        database = AppDatabase.getDatabase(context)
         updateStatus()
         return success
     }
