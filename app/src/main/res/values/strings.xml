@@ -40,6 +40,7 @@
     <string name="header_anchor_name">Name</string>
     <string name="header_anchor_path_number">Paths</string>
     <!--Path List Fragment-->
+    <string name="title_paths_list">Paths</string>
     <string name="title_path_list">Origin: %s</string>
     <string name="header_path_destination">Destination</string>
     <string name="header_path_distance">Distance</string>

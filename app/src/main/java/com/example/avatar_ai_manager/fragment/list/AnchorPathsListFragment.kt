@@ -14,18 +14,6 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
     private val args: AnchorPathsListFragmentArgs by navArgs()
 
-    private val addArAnchor = {
-        saveScrollPositionAndNavigate(
-            AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToAddArAnchorFragment()
-        )
-    }
-
-    private val addAnchorReference = {
-        saveScrollPositionAndNavigate(
-            AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToAddAnchorFragment()
-        )
-    }
-
     private val showPathsList = { anchor: AnchorWithPathCount ->
         saveScrollPositionAndNavigate(
             AnchorPathsListFragmentDirections.actionAnchorPathsListFragmentToPathListFragment(
@@ -48,13 +36,13 @@ class AnchorPathsListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
         setBaseFragmentOptions(
             BaseOptions(
-                titleText = getString(R.string.title_anchor_list),
-                isPrimaryButtonEnabled = true,
-                primaryButtonText = getString(R.string.button_add_ar_anchor),
-                primaryButtonOnClick = addArAnchor,
-                isSecondaryButtonEnabled = true,
-                secondaryButtonText = getString(R.string.button_add_anchor),
-                secondaryButtonOnClick = addAnchorReference
+                titleText = getString(R.string.title_paths_list),
+                isPrimaryButtonEnabled = false,
+                primaryButtonText = null,
+                primaryButtonOnClick = null,
+                isSecondaryButtonEnabled = false,
+                secondaryButtonText = null,
+                secondaryButtonOnClick = null
             )
         )
 
