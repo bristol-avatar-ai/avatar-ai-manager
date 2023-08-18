@@ -79,8 +79,9 @@
     <string name="title_edit_path">Edit Path</string>
     <string name="message_path_added">Path Added</string>
     <string name="message_path_discarded">Path Discarded</string>
-    <string name="message_path_updates">Path Updated</string>
+    <string name="message_path_updated">Path Updated</string>
     <string name="message_path_deleted">Path Deleted</string>
+    <string name="message_destination_required">Destination Selection Required</string>
     <!--Anchor Selection Fragment-->
     <string name="title_select_anchor">Select Anchor</string>
 </resources>

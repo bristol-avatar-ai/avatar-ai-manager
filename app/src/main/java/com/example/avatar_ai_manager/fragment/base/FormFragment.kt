@@ -98,6 +98,10 @@ abstract class FormFragment : BaseFragment() {
         }
     }
 
+    protected fun setSecondaryInputType(inputType: Int) {
+        innerBinding.textEditSecondary.inputType = inputType
+    }
+
     protected fun getPrimaryFieldText(): String {
         return innerBinding.textEditPrimary.text.toString()
     }

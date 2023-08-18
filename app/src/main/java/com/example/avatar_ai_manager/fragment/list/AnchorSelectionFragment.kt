@@ -19,6 +19,7 @@ class AnchorSelectionFragment : ListFragment<Anchor>() {
         when (findNavController().previousBackStackEntry?.destination?.id) {
             R.id.addFeatureFragment -> navigateToAddFeatureFragment(anchor)
             R.id.editFeatureFragment -> navigateToEditFeatureFragment(anchor)
+            R.id.addPathFragment -> navigateToAddPathFragment(anchor)
         }
     }
 
@@ -40,6 +41,18 @@ class AnchorSelectionFragment : ListFragment<Anchor>() {
                 anchor.id,
                 anchor.name,
                 args.featureDescription.toString()
+            )
+        )
+    }
+
+    private fun navigateToAddPathFragment(anchor: Anchor) {
+        findNavController().navigate(
+            AnchorSelectionFragmentDirections.actionAnchorSelectionFragmentToAddPathFragment(
+                args.originId.toString(),
+                args.originName.toString(),
+                anchor.id,
+                anchor.name,
+                args.distance
             )
         )
     }

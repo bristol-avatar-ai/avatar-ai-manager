@@ -30,6 +30,12 @@
         <argument
             android:name="originName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_pathListFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment" />
+        <action
+            android:id="@+id/action_pathListFragment_to_editPathFragment"
+            app:destination="@id/editPathFragment" />
     </fragment>
     <fragment
         android:id="@+id/addArAnchorFragment"
@@ -155,6 +161,23 @@
             app:destination="@id/editFeatureFragment"
             app:popUpTo="@id/editFeatureFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="originId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="originName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="distance"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_anchorSelectionFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment"
+            app:popUpTo="@id/addPathFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/editFeatureFragment"
@@ -177,5 +200,53 @@
         <action
             android:id="@+id/action_editFeatureFragment_to_anchorSelectionFragment"
             app:destination="@id/anchorSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPathFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddPathFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form" >
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="originName"
+            app:argType="string" />
+        <argument
+            android:name="destinationId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="destinationName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="distance"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_addPathFragment_to_anchorSelectionFragment"
+            app:destination="@id/anchorSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPathFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditPathFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="originName"
+            app:argType="string" />
+        <argument
+            android:name="destinationId"
+            app:argType="string" />
+        <argument
+            android:name="destinationName"
+            app:argType="string" />
+        <argument
+            android:name="distance"
+            app:argType="string" />
     </fragment>
 </navigation>

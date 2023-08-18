@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 
 private const val TAG = "AddAnchorFragment"
 
+private const val ANCHOR = "anchor"
+
 class AddAnchorFragment : FormFragment() {
 
     private val anchorName get() = getPrimaryFieldText()
@@ -34,7 +36,7 @@ class AddAnchorFragment : FormFragment() {
                     clearFields()
                 }
             } catch (e: SQLiteConstraintException) {
-                showSnackBar(getString(R.string.message_duplicate_error, anchorId))
+                showSnackBar(getString(R.string.message_duplicate_error, ANCHOR))
             }
         }
     }

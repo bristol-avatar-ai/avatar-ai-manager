@@ -14,9 +14,29 @@ class PathListFragment : ListFragment<PathWithNames>() {
 
     private val args: PathListFragmentArgs by navArgs()
 
-    private val addPath = {}
+    private val addPath = {
+        saveScrollPositionAndNavigate(
+            PathListFragmentDirections.actionPathListFragmentToAddPathFragment(
+                args.originId,
+                args.originName,
+                null,
+                null,
+                null
+            )
+        )
+    }
 
-    private val editPath = { _: PathWithNames -> }
+    private val editPath = { path: PathWithNames ->
+        saveScrollPositionAndNavigate(
+            PathListFragmentDirections.actionPathListFragmentToEditPathFragment(
+                args.originId,
+                args.originName,
+                path.getDestinationId(args.originId),
+                path.getDestinationName(args.originId),
+                path.distance.toString()
+            )
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

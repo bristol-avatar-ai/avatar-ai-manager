@@ -10,6 +10,14 @@ data class PathWithNames(
     val distance: Int
 ) {
 
+    fun getDestinationId(originId: String): String {
+        return if (anchor1Id == originId) {
+            anchor2Id
+        } else {
+            anchor1Id
+        }
+    }
+
     fun getDestinationName(originId: String): String {
         return if (anchor1Id == originId) {
             anchor2Name

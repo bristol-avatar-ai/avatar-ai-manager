@@ -57,7 +57,10 @@ class EditFeatureFragment : FormFragment() {
         findNavController().navigate(
             EditFeatureFragmentDirections.actionEditFeatureFragmentToAnchorSelectionFragment(
                 args.featureName,
-                featureDescription
+                featureDescription,
+                null,
+                null,
+                null
             )
         )
     }

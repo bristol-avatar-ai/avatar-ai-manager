@@ -68,7 +68,10 @@ class AddFeatureFragment : FormFragment() {
         findNavController().navigate(
             AddFeatureFragmentDirections.actionAddFeatureFragmentToAnchorSelectionFragment(
                 featureName,
-                featureDescription
+                featureDescription,
+                null,
+                null,
+                null
             )
         )
     }
