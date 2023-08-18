@@ -1,24 +1,23 @@
 package com.example.avatar_ai_manager
 
 import android.os.Bundle
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.avatar_ai_manager.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
 private const val TAG = "MainActivity"
 
 private const val SNACK_BAR_DURATION = 2000
-private const val SNACK_BAR_MAX_LINES = 1
-private const val SNACK_BAR_HEIGHT = 120
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     private lateinit var navController: NavController
 
@@ -34,13 +33,37 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Set up the action bar for use with the NavController
-        setupActionBarWithNavController(navController)
+        setupTopNavigationBar()
+        setupBottomNavigationBar()
 
         // Create SnackBar for displaying messages.
-        val navHostFragmentParams =
-            binding.navHostFragment.layoutParams as ViewGroup.MarginLayoutParams
-        snackBar = createSnackBar(navHostFragmentParams)
+        snackBar = Snackbar.make(binding.root, "", SNACK_BAR_DURATION)
+    }
+
+    private fun setupTopNavigationBar() {
+        // Set up the top action bar for use with the NavController
+        setupActionBarWithNavController(
+            navController,
+            // Specify the bottom menu items as top-level destinations.
+            AppBarConfiguration.Builder(binding.bottomNavView.menu).build()
+        )
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setupBottomNavigationBar() {
+        // Set up the bottom bar for use with the NavController
+        binding.bottomNavView.setupWithNavController(navController)
+        binding.bottomNavView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.featureListFragment, R.id.anchorListFragment, R.id.pathListFragment -> {
+                    navController.popBackStack()
+                    navController.navigate(menuItem.itemId)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
     /*
@@ -49,28 +72,6 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         // Enable the Up button for all other fragments.
         return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    private fun createSnackBar(
-        navHostFragmentParams: ViewGroup.MarginLayoutParams
-    ): Snackbar {
-        return Snackbar.make(binding.root, "", SNACK_BAR_DURATION)
-            .addCallback(object : Snackbar.Callback() {
-
-                override fun onShown(sb: Snackbar?) {
-                    super.onShown(sb)
-                    navHostFragmentParams.bottomMargin += SNACK_BAR_HEIGHT
-                    binding.navHostFragment.layoutParams = navHostFragmentParams
-                }
-
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    navHostFragmentParams.bottomMargin -= SNACK_BAR_HEIGHT
-                    binding.navHostFragment.layoutParams = navHostFragmentParams
-                }
-
-            })
-            .setTextMaxLines(SNACK_BAR_MAX_LINES)
     }
 
 }

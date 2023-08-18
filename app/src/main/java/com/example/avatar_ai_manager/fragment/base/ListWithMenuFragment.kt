@@ -17,19 +17,8 @@ private const val TAG = "ListWithMenuFragment"
 @Suppress("DEPRECATION")
 abstract class ListWithMenuFragment<T> : ListFragment<T>() {
 
-    data class MainListOptions(
-        val switchScreenButtonTitle: String,
-        val switchScreenButtonIcon: Int,
-        val onSwitchScreen: () -> Unit
-    )
-
     private var uploadMenuItem: MenuItem? = null
     private var refreshMenuItem: MenuItem? = null
-    private var switchScreensMenuItem: MenuItem? = null
-
-    private var switchScreenButtonTitle: String? = null
-    private var switchScreenButtonIcon: Int? = null
-    private var onSwitchScreen: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +31,6 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         inflater.inflate(R.menu.menu, menu)
         uploadMenuItem = menu.findItem(R.id.action_upload)
         refreshMenuItem = menu.findItem(R.id.action_refresh)
-        switchScreensMenuItem = menu.findItem(R.id.action_switch_screen)
-
-        switchScreensMenuItem?.title = switchScreenButtonTitle
-        switchScreenButtonIcon?.let {
-            switchScreensMenuItem?.setIcon(it)
-        }
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -56,27 +39,18 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         super.onDatabaseLoading()
         uploadMenuItem?.isEnabled = false
         refreshMenuItem?.isEnabled = false
-        switchScreensMenuItem?.isEnabled = false
     }
 
     override fun onDatabaseReady() {
         super.onDatabaseReady()
         uploadMenuItem?.isEnabled = true
         refreshMenuItem?.isEnabled = true
-        switchScreensMenuItem?.isEnabled = true
     }
 
     override fun onDatabaseError() {
         super.onDatabaseError()
         uploadMenuItem?.isEnabled = false
         refreshMenuItem?.isEnabled = true
-        switchScreensMenuItem?.isEnabled = false
-    }
-
-    protected fun setListWithMenuFragmentOptions(options: MainListOptions) {
-        switchScreenButtonTitle = options.switchScreenButtonTitle
-        switchScreenButtonIcon = options.switchScreenButtonIcon
-        onSwitchScreen = options.onSwitchScreen
     }
 
     @Deprecated("Deprecated in Java")
@@ -84,7 +58,6 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
         return when (item.itemId) {
             R.id.action_upload -> onActionUpload()
             R.id.action_refresh -> onActionRefresh()
-            R.id.action_switch_screen -> onActionSwitchScreen()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -131,13 +104,6 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
             lifecycleScope.launch(Dispatchers.IO) {
                 databaseViewModel.reload()
             }
-        }
-        return true
-    }
-
-    private fun onActionSwitchScreen(): Boolean {
-        if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
-            onSwitchScreen?.invoke()
         }
         return true
     }

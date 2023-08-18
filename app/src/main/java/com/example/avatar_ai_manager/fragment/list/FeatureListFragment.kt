@@ -33,14 +33,6 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
         )
     }
 
-    private val showAnchors = {
-        saveScrollPositionAndNavigate(
-            FeatureListFragmentDirections.actionFeatureListFragmentToAnchorListFragment(
-                null
-            )
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,14 +60,6 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
                 ),
                 getFlowList = databaseViewModel::getFeatures,
                 navArgsScrollPosition = null
-            )
-        )
-
-        setListWithMenuFragmentOptions(
-            MainListOptions(
-                switchScreenButtonTitle = getString(R.string.button_show_anchors),
-                switchScreenButtonIcon = R.drawable.ic_anchor,
-                onSwitchScreen = showAnchors
             )
         )
 

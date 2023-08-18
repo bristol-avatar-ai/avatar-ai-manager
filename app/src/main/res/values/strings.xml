@@ -1,10 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">MVB Manager</string>
+    <string name="app_name">Avatar AI Manager</string>
     <!-- Menu Buttons -->
     <string name="button_upload_database">Upload Database</string>
     <string name="button_refresh_database">Refresh Database</string>
-    <string name="button_show_anchors">Show Anchors</string>
-    <string name="button_show_paths">Show Paths</string>
     <string name="button_continue">Continue</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_ok">OK</string>

@@ -23,14 +23,6 @@ class PathListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
         )
     }
 
-    private val showAnchors = {
-        saveScrollPositionAndNavigate(
-            PathListFragmentDirections.actionPathListFragmentToAnchorListFragment(
-                getScrollPosition().toString()
-            )
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,14 +50,6 @@ class PathListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
                 ),
                 getFlowList = databaseViewModel::getAnchorsWithPathCounts,
                 navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
-            )
-        )
-
-        setListWithMenuFragmentOptions(
-            MainListOptions(
-                switchScreenButtonTitle = getString(R.string.button_show_anchors),
-                switchScreenButtonIcon = R.drawable.ic_anchor,
-                onSwitchScreen = showAnchors
             )
         )
 

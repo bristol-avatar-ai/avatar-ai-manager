@@ -15,11 +15,4 @@
         android:title="@string/button_refresh_database"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_switch_screen"
-        app:showAsAction="ifRoom"
-        tools:icon="@drawable/ic_anchor"
-        tools:ignore="MenuTitle"
-        tools:title="@string/button_show_anchors" />
-
 </menu>

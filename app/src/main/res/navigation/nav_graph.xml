@@ -10,9 +10,6 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_featureListFragment_to_anchorListFragment"
-            app:destination="@id/anchorListFragment" />
-        <action
             android:id="@+id/action_featureListFragment_to_addFeatureFragment"
             app:destination="@id/addFeatureFragment" />
         <action
@@ -53,17 +50,13 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_anchorListFragment_to_pathListFragment"
-            app:destination="@id/pathListFragment"
-            app:popUpTo="@id/anchorListFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
         <argument
             android:name="scrollPosition"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="0" />
         <action
             android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
@@ -77,23 +70,13 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_pathListFragment_to_anchorListFragment"
-            app:destination="@id/anchorListFragment"
-            app:popUpTo="@id/pathListFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_pathListFragment_to_addArAnchorFragment"
-            app:destination="@id/addArAnchorFragment" />
-        <action
             android:id="@+id/action_pathListFragment_to_pathsAtAnchorListFragment"
             app:destination="@id/pathsAtAnchorListFragment" />
         <argument
             android:name="scrollPosition"
             app:argType="string"
-            app:nullable="true" />
-        <action
-            android:id="@+id/action_pathListFragment_to_addAnchorFragment"
-            app:destination="@id/addAnchorFragment" />
+            app:nullable="true"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/addAnchorFragment"

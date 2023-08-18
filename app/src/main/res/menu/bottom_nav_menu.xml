@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/featureListFragment"
+        android:icon="@drawable/ic_feature"
+        android:title="@string/title_feature_list" />
+    <item
+        android:id="@+id/anchorListFragment"
+        android:icon="@drawable/ic_anchor"
+        android:title="@string/title_anchor_list" />
+    <item
+        android:id="@+id/pathListFragment"
+        android:icon="@drawable/ic_path"
+        android:title="@string/title_paths_list" />
+</menu>
