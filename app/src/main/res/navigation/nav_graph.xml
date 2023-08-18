@@ -1,152 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/anchorListFragment">
-
+    app:startDestination="@id/featureListFragment">
+    <fragment
+        android:id="@+id/featureListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.FeatureListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_featureListFragment_to_addFeatureFragment"
+            app:destination="@id/addFeatureFragment" />
+        <action
+            android:id="@+id/action_featureListFragment_to_editFeatureFragment"
+            app:destination="@id/editFeatureFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pathsAtAnchorListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.PathsAtAnchorListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="originName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_pathsAtAnchorListFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment" />
+        <action
+            android:id="@+id/action_pathsAtAnchorListFragment_to_editPathFragment"
+            app:destination="@id/editPathFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addArAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddArAnchorFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_add_ar_anchor">
+        <action
+            android:id="@+id/action_addArAnchorFragment_to_editAnchorFragment"
+            app:destination="@id/editAnchorFragment"
+            app:popUpTo="@id/pathListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/anchorListFragment"
         android:name="com.example.avatar_ai_manager.fragment.list.AnchorListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_anchorListFragment_to_exhibitionListFragment"
-            app:destination="@id/exhibitionListFragment" />
-        <action
-            android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
-            app:destination="@id/editAnchorFragment" />
-        <action
             android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
         <action
             android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/exhibitionListFragment"
-        android:name="com.example.avatar_ai_manager.fragment.list.ExhibitionListFragment"
-        android:label="@string/exhibition_list_fragment_label">
-        <argument
-            android:name="anchorId"
-            app:argType="string" />
         <action
-            android:id="@+id/action_exhibitionListFragment_to_pathListFragment"
-            app:destination="@id/pathListFragment"
-            app:popUpTo="@id/anchorListFragment" />
-        <action
-            android:id="@+id/action_exhibitionListFragment_to_editExhibitionFragment"
-            app:destination="@id/editExhibitionFragment" />
-        <action
-            android:id="@+id/action_exhibitionListFragment_to_addExhibitionFragment"
-            app:destination="@id/addExhibitionFragment" />
+            android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
+            app:destination="@id/editAnchorFragment" />
     </fragment>
     <fragment
         android:id="@+id/pathListFragment"
         android:name="com.example.avatar_ai_manager.fragment.list.PathListFragment"
-        android:label="@string/path_list_fragment_label">
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_pathListFragment_to_exhibitionListFragment"
-            app:destination="@id/exhibitionListFragment"
-            app:popUpTo="@id/anchorListFragment" />
-        <argument
-            android:name="anchorId"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_pathListFragment_to_addPathFragment"
-            app:destination="@id/addPathFragment" />
-        <action
-            android:id="@+id/action_pathListFragment_to_editPathFragment"
-            app:destination="@id/editPathFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/editAnchorFragment"
-        android:name="com.example.avatar_ai_manager.fragment.edit.EditAnchorFragment"
-        android:label="@string/edit_anchor_fragment_label">
-        <argument
-            android:name="anchorId"
-            app:argType="string" />
-        <argument
-            android:name="description"
-            app:argType="string"
-            android:defaultValue="" />
-    </fragment>
-    <fragment
-        android:id="@+id/editExhibitionFragment"
-        android:name="com.example.avatar_ai_manager.fragment.edit.EditExhibitionFragment"
-        android:label="@string/edit_exhibition_fragment_label">
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <argument
-            android:name="description"
-            app:argType="string"
-            android:defaultValue="" />
-    </fragment>
-    <fragment
-        android:id="@+id/addExhibitionFragment"
-        android:name="com.example.avatar_ai_manager.fragment.add.AddExhibitionFragment"
-        android:label="@string/add_exhibition_fragment_label"
-        tools:layout="@layout/fragment_add" >
-        <argument
-            android:name="anchorId"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/addArAnchorFragment"
-        android:name="com.example.avatar_ai_manager.fragment.add.AddArAnchorFragment"
-        android:label="@string/add_anchor_fragment_label">
-        <action
-            android:id="@+id/action_addAnchorFragment_to_editAnchorFragment"
-            app:destination="@id/editAnchorFragment"
-            app:popUpTo="@id/anchorListFragment" />
+            android:id="@+id/action_pathListFragment_to_pathsAtAnchorListFragment"
+            app:destination="@id/pathsAtAnchorListFragment" />
     </fragment>
     <fragment
         android:id="@+id/addAnchorFragment"
         android:name="com.example.avatar_ai_manager.fragment.add.AddAnchorFragment"
-        android:label="@string/app_name" />
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form" />
+    <fragment
+        android:id="@+id/editAnchorFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditAnchorFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFeatureFragment"
+        android:name="com.example.avatar_ai_manager.fragment.add.AddFeatureFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
+        <argument
+            android:name="featureName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="anchorId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="anchorName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="featureDescription"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_addFeatureFragment_to_anchorSelectionFragment"
+            app:destination="@id/anchorSelectionFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/anchorSelectionFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.AnchorSelectionFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_anchorSelectionFragment_to_addFeatureFragment"
+            app:destination="@id/addFeatureFragment"
+            app:popUpTo="@id/addFeatureFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="featureName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="featureDescription"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_anchorSelectionFragment_to_editFeatureFragment"
+            app:destination="@id/editFeatureFragment"
+            app:popUpTo="@id/editFeatureFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="originId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="originName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="distance"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_anchorSelectionFragment_to_addPathFragment"
+            app:destination="@id/addPathFragment"
+            app:popUpTo="@id/addPathFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/editFeatureFragment"
+        android:name="com.example.avatar_ai_manager.fragment.edit.EditFeatureFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
+        <argument
+            android:name="featureName"
+            app:argType="string" />
+        <argument
+            android:name="anchorId"
+            app:argType="string" />
+        <argument
+            android:name="anchorName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="featureDescription"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_editFeatureFragment_to_anchorSelectionFragment"
+            app:destination="@id/anchorSelectionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addPathFragment"
         android:name="com.example.avatar_ai_manager.fragment.add.AddPathFragment"
-        android:label="@string/add_path_fragment_label">
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
         <argument
             android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="originName"
             app:argType="string" />
         <argument
             android:name="destinationId"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_addPathFragment_to_pathSelectionFragment"
-            app:destination="@id/pathSelectionFragment"
-            app:popUpTo="@id/addPathFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/pathSelectionFragment"
-        android:name="com.example.avatar_ai_manager.fragment.PathSelectionFragment"
-        android:label="@string/select_path_fragment_label">
-        <action
-            android:id="@+id/action_pathSelectionFragment_to_addPathFragment"
-            app:destination="@id/addPathFragment"
-            app:popUpTo="@id/pathSelectionFragment"
-            app:popUpToInclusive="true" />
         <argument
-            android:name="originId"
-            app:argType="string" />
+            android:name="destinationName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="distance"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_addPathFragment_to_anchorSelectionFragment"
+            app:destination="@id/anchorSelectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPathFragment"
         android:name="com.example.avatar_ai_manager.fragment.edit.EditPathFragment"
-        android:label="@string/edit_path_fragment_label">
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_form">
         <argument
             android:name="originId"
+            app:argType="string" />
+        <argument
+            android:name="originName"
             app:argType="string" />
         <argument
             android:name="destinationId"
             app:argType="string" />
         <argument
+            android:name="destinationName"
+            app:argType="string" />
+        <argument
             android:name="distance"
-            app:argType="integer" />
+            app:argType="string" />
     </fragment>
 </navigation>

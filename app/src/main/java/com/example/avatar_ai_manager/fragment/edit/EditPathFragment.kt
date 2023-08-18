@@ -1,112 +1,94 @@
 package com.example.avatar_ai_manager.fragment.edit
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.text.InputType
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
-import com.example.avatar_ai_manager.databinding.FragmentPathBinding
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.fragment.base.FormFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "EditPathFragment"
 
-private const val ARG_ORIGIN_ID = "originId"
-private const val ARG_DESTINATION_ID = "destinationId"
-private const val ARG_DISTANCE = "distance"
+class EditPathFragment : FormFragment() {
 
-class EditPathFragment : Fragment() {
+    private val args: EditPathFragmentArgs by navArgs()
 
-    private var originId: String? = null
-    private var destinationId: String? = null
-    private var distance: Int? = null
+    private val distance get() = getSecondaryFieldText()
 
-    private var _binding: FragmentPathBinding? = null
-    private val binding get() = _binding!!
+    private val deletePath: () -> Unit = {
+        disableButtons()
+        lifecycleScope.launch(Dispatchers.IO) {
+            databaseViewModel.deletePath(args.originId, args.destinationId)
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            originId = it.getString(ARG_ORIGIN_ID)
-            destinationId = it.getString(ARG_DESTINATION_ID)
-            distance = it.getInt(ARG_DISTANCE)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentPathBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.title.text = getString(R.string.title_origin, originId)
-        binding.destination.text = destinationId
-        binding.distanceEditText.setText(distance.toString())
-        binding.button1.text = getString(R.string.button_amend)
-        binding.button2.text = getString(R.string.button_delete)
-
-        originId?.let { originId ->
-            destinationId?.let { destinationId ->
-                setAmendButton(originId, destinationId)
-                setDeleteButton(originId, destinationId)
+            withContext(Dispatchers.Main) {
+                showSnackBar(getString(R.string.message_path_deleted))
+                findNavController().navigateUp()
             }
         }
     }
 
-    private fun enableButtons() {
-        binding.button1.isEnabled = true
-        binding.button2.isEnabled = true
-    }
-
-    private fun disableButtons() {
-        binding.button1.isEnabled = false
-        binding.button2.isEnabled = false
-    }
-
-    private fun setAmendButton(originId: String, destinationId: String) {
-        binding.button1.setOnClickListener {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                amendPath(originId, destinationId)
+    private val updatePath: () -> Unit = {
+        disableButtons()
+        lifecycleScope.launch(Dispatchers.IO) {
+            databaseViewModel.updatePath(
+                args.originId,
+                args.destinationId,
+                distance.toIntOrNull() ?: 0
+            )
+            withContext(Dispatchers.Main) {
+                showSnackBar(getString(R.string.message_path_updated))
                 enableButtons()
             }
         }
     }
 
-    private suspend fun amendPath(originId: String, destinationId: String) {
-        viewModel.updatePath(
-            originId,
-            destinationId,
-            binding.distanceEditText.text.toString().toIntOrNull() ?: 0
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBaseFragmentOptions(
+            BaseOptions(
+                titleText = getString(R.string.title_edit_path),
+                isPrimaryButtonEnabled = true,
+                primaryButtonText = getString(R.string.button_delete),
+                primaryButtonOnClick = deletePath,
+                isSecondaryButtonEnabled = true,
+                secondaryButtonText = getString(R.string.button_amend),
+                secondaryButtonOnClick = updatePath
+            )
         )
-        viewModel.showMessage(
-            requireActivity(),
-            getString(R.string.message_path_amended)
+
+        setFormFragmentOptions(
+            FormOptions(
+                isPrimaryTextFieldEnabled = true,
+                isPrimaryTextFieldEditable = false,
+                primaryTextFieldHint = getString(R.string.field_origin),
+                primaryTextFieldText = args.originName,
+                isSelectorEnabled = true,
+                isSelectorEditable = false,
+                selectorHint = null,
+                getSelectorText = { getString(R.string.field_destination, args.destinationName) },
+                selectorOnClick = null,
+                isSecondaryTextFieldEnabled = true,
+                isSecondaryTextFieldEditable = true,
+                secondaryTextFieldHint = getString(R.string.field_distance),
+                secondaryTextFieldText = args.distance,
+                isSwitchEnabled = false,
+                switchText = null,
+                getIsSwitchChecked = null
+            )
         )
+        setSecondaryInputType(InputType.TYPE_CLASS_NUMBER)
+
     }
 
-    private fun setDeleteButton(originId: String, destinationId: String) {
-        binding.button2.setOnClickListener() {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.deletePath(originId, destinationId)
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_path_deleted)
-                )
-                findNavController().navigateUp()
-            }
+    override fun onDestroyView() {
+        if (distance != args.distance) {
+            showSnackBar(getString(R.string.message_changes_discarded))
         }
+        super.onDestroyView()
     }
 }

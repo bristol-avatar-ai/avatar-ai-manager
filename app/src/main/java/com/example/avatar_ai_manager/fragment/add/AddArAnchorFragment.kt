@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
+import com.example.avatar_ai_manager.MainActivity
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentAddArAnchorBinding
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
@@ -29,14 +30,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "AddAnchorFragment"
+private const val TAG = "AddArAnchorFragment"
 
 class AddArAnchorFragment : Fragment() {
 
     private var _binding: FragmentAddArAnchorBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
+    private val databaseViewModel: DatabaseViewModel by activityViewModels()
 
     private lateinit var sceneView: ArSceneView
     private lateinit var avatarButton: ExtendedFloatingActionButton
@@ -51,6 +52,10 @@ class AddArAnchorFragment : Fragment() {
     private var modelNode: ArModelNode? = null
     private var avatarIsLoaded: Boolean = false
     private var avatarIsPlaced: Boolean = false
+
+    private fun showSnackBar(message: String) {
+        (requireActivity() as MainActivity).snackBar.setText(message).show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -210,11 +215,10 @@ class AddArAnchorFragment : Fragment() {
     private fun processCloudAnchor(anchorId: String?) {
         if (anchorId != null) {
             addAnchorToDatabase(anchorId)
+            Log.i(TAG, "Cloud Anchor Uploaded - ID: $anchorId")
         } else {
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_anchor_failed)
-            )
+            Log.e(TAG, "processCloudAnchor: Cloud Anchor Upload Failed")
+            showSnackBar(getString(R.string.message_cloud_anchor_upload_failed))
             // Navigate back to AnchorListFragment
             findNavController().navigateUp()
         }
@@ -227,22 +231,19 @@ class AddArAnchorFragment : Fragment() {
     private fun addAnchorToDatabase(anchorId: String) {
         // Add anchor to database in IO thread.
         lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                viewModel.addAnchor(
-                    Anchor(
-                        anchorId,
-                        ""
+            if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
+                try {
+                    databaseViewModel.addAnchor(
+                        Anchor(anchorId, "")
                     )
-                )
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_anchor_added)
-                )
-            } catch (e: SQLiteConstraintException) {
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_duplicate_error, anchorId)
-                )
+                } catch (e: SQLiteConstraintException) {
+                    databaseViewModel.updateAnchor(anchorId, "")
+                    Log.w(TAG, "Anchor Id already exists in database", e)
+                }
+                showSnackBar(getString(R.string.message_anchor_added))
+            } else {
+                Log.e(TAG, "addAnchorToDatabase: database not ready")
+                showSnackBar(getString(R.string.message_anchor_insertion_failed))
             }
             navigateToEditAnchorFragment(anchorId)
         }
@@ -254,9 +255,11 @@ class AddArAnchorFragment : Fragment() {
     private suspend fun navigateToEditAnchorFragment(anchorId: String) {
         // Switch back to main thread.
         withContext(Dispatchers.Main) {
-            // Navigate to AnchorEditFragment
-            binding.root.findNavController().navigate(
-                AddArAnchorFragmentDirections.actionAddAnchorFragmentToEditAnchorFragment(anchorId)
+            findNavController().navigate(
+                AddArAnchorFragmentDirections.actionAddArAnchorFragmentToEditAnchorFragment(
+                    anchorId,
+                    ""
+                )
             )
         }
     }

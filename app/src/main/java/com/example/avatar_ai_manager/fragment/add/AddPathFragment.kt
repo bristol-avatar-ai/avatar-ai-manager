@@ -2,133 +2,125 @@ package com.example.avatar_ai_manager.fragment.add
 
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.text.InputType
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
-import com.example.avatar_ai_manager.databinding.FragmentPathBinding
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.fragment.base.FormFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "AddPathFragment"
 
-private const val ARG_ORIGIN_ID = "originId"
-private const val ARG_DESTINATION_ID = "destinationId"
+private const val PATH = "path"
 
-class AddPathFragment : Fragment() {
+class AddPathFragment : FormFragment() {
 
-    private var originId: String? = null
-    private var destinationId: String? = null
+    private val args: AddPathFragmentArgs by navArgs()
 
-    private var _binding: FragmentPathBinding? = null
-    private val binding get() = _binding!!
+    private val distance get() = getSecondaryFieldText()
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
+    private var isNotDiscardAction = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            originId = it.getString(ARG_ORIGIN_ID)
-            destinationId = it.getString(ARG_DESTINATION_ID)
+    private val discardPath: () -> Unit = {
+        findNavController().navigateUp()
+    }
+
+    private val addPath: () -> Unit = {
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (args.destinationId != null) {
+                disableButtons()
+                try {
+                    addPathToDatabase()
+                    isNotDiscardAction = true
+                    findNavController().navigateUp()
+                } catch (e: SQLiteConstraintException) {
+                    showSnackBar(getString(R.string.message_duplicate_error, PATH))
+                }
+                enableButtons()
+            } else {
+                showSnackBar(getString(R.string.message_destination_required))
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentPathBinding.inflate(inflater, container, false)
-        return binding.root
+    private suspend fun addPathToDatabase() {
+        withContext(Dispatchers.IO) {
+            databaseViewModel.addPath(
+                args.originId,
+                args.destinationId.toString(),
+                distance.toIntOrNull() ?: 0
+            )
+        }
+        showSnackBar(getString(R.string.message_path_added))
+    }
+
+    private val selectDestination = {
+        isNotDiscardAction = true
+        findNavController().navigate(
+            AddPathFragmentDirections.actionAddPathFragmentToAnchorSelectionFragment(
+                null,
+                null,
+                args.originId,
+                args.originName,
+                distance
+            )
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.title.text = getString(R.string.title_origin, originId)
-        if (destinationId == null) {
-            binding.destination.text = getString(R.string.button_select_destination)
-        } else {
-            binding.destination.text = destinationId
-        }
-        binding.button1.text = getString(R.string.button_add)
-        binding.button2.text = getString(R.string.button_discard)
-
-        originId?.let { originId ->
-            setSelectPathButton(originId)
-            destinationId?.let { destinationId ->
-                setAddButton(originId, destinationId)
-            }
-        }
-        setDiscardButton()
-    }
-
-    private fun enableButtons() {
-        binding.button1.isEnabled = true
-        binding.button2.isEnabled = true
-    }
-
-    private fun disableButtons() {
-        binding.button1.isEnabled = false
-        binding.button2.isEnabled = false
-    }
-
-    private fun setSelectPathButton(originId: String) {
-        binding.destination.setOnClickListener {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                binding.root.findNavController().navigate(
-                    AddPathFragmentDirections.actionAddPathFragmentToPathSelectionFragment(originId)
-                )
-            }
-        }
-    }
-
-    private fun setAddButton(originId: String, destinationId: String) {
-        binding.button1.setOnClickListener {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                addPath(originId, destinationId)
-                enableButtons()
-            }
-        }
-    }
-
-    private suspend fun addPath(originId: String, destinationId: String) {
-        try {
-            viewModel.addPath(
-                originId,
-                destinationId,
-                binding.distanceEditText.text.toString().toIntOrNull() ?: 0
+        setBaseFragmentOptions(
+            BaseOptions(
+                titleText = getString(R.string.title_new_path),
+                isPrimaryButtonEnabled = true,
+                primaryButtonText = getString(R.string.button_discard),
+                primaryButtonOnClick = discardPath,
+                isSecondaryButtonEnabled = true,
+                secondaryButtonText = getString(R.string.button_add),
+                secondaryButtonOnClick = addPath
             )
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_path_added)
+        )
+
+        setFormFragmentOptions(
+            FormOptions(
+                isPrimaryTextFieldEnabled = true,
+                isPrimaryTextFieldEditable = false,
+                primaryTextFieldHint = getString(R.string.field_origin),
+                primaryTextFieldText = args.originName,
+                isSelectorEnabled = true,
+                isSelectorEditable = true,
+                selectorHint = getString(R.string.field_select_destination),
+                getSelectorText = {
+                    args.destinationName?.let {
+                        getString(R.string.field_destination, it)
+                    }
+                },
+                selectorOnClick = selectDestination,
+                isSecondaryTextFieldEnabled = true,
+                isSecondaryTextFieldEditable = true,
+                secondaryTextFieldHint = getString(R.string.field_distance),
+                secondaryTextFieldText = args.distance,
+                isSwitchEnabled = false,
+                switchText = null,
+                getIsSwitchChecked = null
             )
-            binding.destination.text = getString(R.string.button_select_destination)
-            this.destinationId = null
-            binding.distanceEditText.text?.clear()
-        } catch (e: SQLiteConstraintException) {
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_duplicate_error, destinationId)
-            )
-        }
+        )
+        setSecondaryInputType(InputType.TYPE_CLASS_NUMBER)
+        isNotDiscardAction = false
+
     }
 
-    private fun setDiscardButton() {
-        binding.button2.setOnClickListener() {
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_path_discarded)
-                )
-                findNavController().navigateUp()
-            }
+    override fun onDestroyView() {
+        if ((!args.destinationId.isNullOrEmpty() || distance.isNotEmpty())
+            && !isNotDiscardAction
+        ) {
+            showSnackBar(getString(R.string.message_path_discarded))
         }
+        super.onDestroyView()
     }
+
 }

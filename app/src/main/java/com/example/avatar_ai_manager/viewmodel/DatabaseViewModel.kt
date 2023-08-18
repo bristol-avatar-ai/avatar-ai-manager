@@ -1,44 +1,77 @@
 package com.example.avatar_ai_manager.viewmodel
 
-import android.app.Activity
-import android.content.Context
+import android.app.Application
 import android.database.sqlite.SQLiteConstraintException
-import android.view.View
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.avatar_ai_cloud_storage.database.AppDatabase
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
+import com.example.avatar_ai_cloud_storage.database.entity.PrimaryFeature
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
-import com.google.android.material.snackbar.Snackbar
+import com.example.avatar_ai_manager.DatabaseApplication
+import com.example.avatar_ai_manager.data.AnchorWithPathCount
+import com.example.avatar_ai_manager.data.PathWithNames
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 
 private const val TAG = "DatabaseViewModel"
 
-private const val SNACK_BAR_DURATION = 2000
-
-class DatabaseViewModel : ViewModel() {
+class DatabaseViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class Status { LOADING, READY, ERROR }
 
-    private val _status = MutableLiveData(Status.ERROR)
+    private val context get() = getApplication<Application>().applicationContext
+
+    private val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
+
+    private val _status = MutableLiveData<Status>()
+
     val status: LiveData<Status> get() = _status
 
-    private var _database: AppDatabase? = null
-    private val database get() = _database!!
-    private val anchorDao get() = database.anchorDao()
-    private val featureDao get() = database.featureDao()
-    private val pathDao get() = database.pathDao()
+    private var database
+        get() = getApplication<DatabaseApplication>().database
+        set(value) {
+            getApplication<DatabaseApplication>().database = value
+        }
+    private val featureDao get() = database?.featureDao()
+    private val primaryFeatureDao get() = database?.primaryFeatureDao()
+    private val anchorDao get() = database?.anchorDao()
+    private val pathDao get() = database?.pathDao()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            load()
+        }
+    }
+
+    private fun postStatus(status: Status) {
+        if (status == Status.ERROR) {
+            Log.w(TAG, "Status: $status")
+        } else {
+            Log.i(TAG, "Status: $status")
+        }
+        _status.postValue(status)
+    }
+
+    private suspend fun load() {
+        if (database == null) {
+            postStatus(Status.LOADING)
+            database = AppDatabase.getDatabase(context)
+        }
+        updateStatus()
+    }
 
     private fun updateStatus() {
-        _status.postValue(
-            if (_database == null) {
+        postStatus(
+            if (database == null) {
                 Status.ERROR
             } else {
                 Status.READY
@@ -46,77 +79,112 @@ class DatabaseViewModel : ViewModel() {
         )
     }
 
-    fun init(context: Context) {
-        if (_database == null) {
-            _status.postValue(Status.LOADING)
-            viewModelScope.launch(Dispatchers.IO) {
-                _database = AppDatabase.getDatabase(context)
-                updateStatus()
-            }
-        }
+    suspend fun reload() {
+        AppDatabase.close()
+        database = null
+        databaseFile.delete()
+        load()
     }
 
-    fun reload(context: Context) {
+    suspend fun upload(): Boolean {
+        postStatus(Status.LOADING)
         AppDatabase.close()
-        _database = null
-        File(context.filesDir, AppDatabase.FILENAME).delete()
-        _status.postValue(Status.LOADING)
-        init(context)
-    }
+        database = null
 
-    suspend fun uploadDatabase(context: Context): Boolean {
-        _status.postValue(Status.LOADING)
-        val databaseFile = File(context.filesDir, AppDatabase.FILENAME)
-        AppDatabase.close()
-        _database = null
         var success = false
         if (databaseFile.exists()) {
             success = CloudStorageApi.uploadDatabase(databaseFile)
         }
-        _database = AppDatabase.getDatabase(context)
+        database = AppDatabase.getDatabase(context)
         updateStatus()
         return success
     }
 
-    fun showMessage(activity: Activity, message: String) {
-        val view = activity.findViewById<View>(android.R.id.content)
-        Snackbar.make(view, message, SNACK_BAR_DURATION).show()
-    }
-
-    fun getAnchors(): Flow<List<Anchor>> {
-        return anchorDao.getAnchorsFlow()
-    }
-
-    fun getFeaturesAtAnchor(anchorId: String): Flow<List<Feature>> {
-        return featureDao.getFeaturesAtAnchor(anchorId)
-    }
-
-    fun getPathsFromAnchor(anchorId: String): Flow<List<Path>> {
-        return pathDao.getPathsFromAnchor(anchorId)
-    }
-
-    suspend fun addAnchor(anchor: Anchor) {
-        anchorDao.insert(anchor)
-    }
-
-    suspend fun updateAnchor(anchorId: String, description: String) {
-        anchorDao.update(anchorId, description)
-    }
-
-    suspend fun deleteAnchor(anchorId: String) {
-        anchorDao.delete(anchorId)
+    fun getFeatures(): Flow<List<Feature>>? {
+        return featureDao?.getFeaturesFlow()
     }
 
     suspend fun addFeature(feature: Feature) {
-        featureDao.insert(feature)
+        featureDao?.insert(feature)
     }
 
     suspend fun updateFeature(name: String, description: String) {
-        featureDao.update(name, description)
+        featureDao?.update(name, description)
     }
 
     suspend fun deleteFeature(name: String) {
-        featureDao.delete(name)
+        featureDao?.delete(name)
+    }
+
+    suspend fun isPrimaryFeature(name: String, anchorId: String): Boolean {
+        return primaryFeatureDao?.getPrimaryFeature(anchorId)?.feature == name
+    }
+
+    suspend fun addPrimaryFeature(anchorId: String, featureName: String) {
+        primaryFeatureDao?.insert(PrimaryFeature(anchorId, featureName))
+    }
+
+    suspend fun deletePrimaryFeature(featureName: String) {
+        primaryFeatureDao?.delete(featureName)
+    }
+
+    fun getAnchors(): Flow<List<Anchor>>? {
+        return anchorDao?.getAnchorsFlow()
+    }
+
+    suspend fun getAnchor(anchorId: String): Anchor? {
+        return anchorDao?.getAnchor(anchorId)
+    }
+
+    suspend fun addAnchor(anchor: Anchor) {
+        anchorDao?.insert(anchor)
+    }
+
+    suspend fun updateAnchor(anchorId: String, name: String) {
+        anchorDao?.update(anchorId, name)
+    }
+
+    suspend fun deleteAnchor(anchorId: String) {
+        anchorDao?.delete(anchorId)
+    }
+
+    fun getAnchorsWithPathCounts(): Flow<List<AnchorWithPathCount>>? {
+        return getAnchors()?.map { anchorList ->
+            anchorList.map { anchor ->
+                AnchorWithPathCount(
+                    anchor.id,
+                    anchor.name,
+                    pathDao?.countPathsFromAnchor(anchor.id) ?: 0
+                )
+            }
+        }
+    }
+
+    fun getPathsWithNamesFromAnchor(anchorId: String): Flow<List<PathWithNames>>? {
+        return pathDao?.getPathsFromAnchor(anchorId)?.map { pathList ->
+            val originName = anchorDao?.getAnchor(anchorId)?.name.toString()
+            pathList.map { path ->
+                PathWithNames(
+                    path.anchor1,
+                    getAnchorName(path.anchor1, anchorId, originName),
+                    path.anchor2,
+                    getAnchorName(path.anchor2, anchorId, originName),
+                    path.distance
+                )
+            }
+        }
+    }
+
+    private suspend fun getAnchorName(
+        anchorId: String,
+        originId: String,
+        originName: String
+    ): String {
+        return if (anchorId == originId) {
+            originName
+        } else {
+            anchorDao?.getAnchor(anchorId)?.name.toString()
+        }
     }
 
     /*
@@ -132,17 +200,17 @@ class DatabaseViewModel : ViewModel() {
             )
         }
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.insert(Path(sortedAnchors[0], sortedAnchors[1], distance))
+        pathDao?.insert(Path(sortedAnchors[0], sortedAnchors[1], distance))
     }
 
     suspend fun updatePath(anchor1: String, anchor2: String, distance: Int) {
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.update(sortedAnchors[0], sortedAnchors[1], distance)
+        pathDao?.update(sortedAnchors[0], sortedAnchors[1], distance)
     }
 
     suspend fun deletePath(anchor1: String, anchor2: String) {
         val sortedAnchors = listOf(anchor1, anchor2).sorted()
-        pathDao.delete(sortedAnchors[0], sortedAnchors[1])
+        pathDao?.delete(sortedAnchors[0], sortedAnchors[1])
     }
 
 }

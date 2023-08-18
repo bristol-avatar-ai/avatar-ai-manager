@@ -2,97 +2,87 @@ package com.example.avatar_ai_manager.fragment.add
 
 import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.R
-import com.example.avatar_ai_manager.databinding.FragmentAddBinding
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.fragment.base.FormFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "AddAnchorFragment"
 
-class AddAnchorFragment : Fragment() {
+private const val ANCHOR = "anchor"
 
-    private var _binding: FragmentAddBinding? = null
-    private val binding get() = _binding!!
+class AddAnchorFragment : FormFragment() {
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
+    private val anchorName get() = getPrimaryFieldText()
+    private val anchorId get() = getSecondaryFieldText()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddBinding.inflate(inflater, container, false)
-        return binding.root
+    private val discardAnchor: () -> Unit = {
+        findNavController().navigateUp()
+    }
+
+    private val addAnchor: () -> Unit = {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                databaseViewModel.addAnchor(
+                    Anchor(anchorId, anchorName)
+                )
+                withContext(Dispatchers.Main) {
+                    showSnackBar(getString(R.string.message_anchor_added))
+                    clearFields()
+                }
+            } catch (e: SQLiteConstraintException) {
+                showSnackBar(getString(R.string.message_duplicate_error, ANCHOR))
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.title.text = getString(R.string.add_anchor_fragment_label)
-        binding.icon1.setImageResource(R.drawable.ic_anchor)
-        binding.field1.hint = getString(R.string.field_anchor_id)
-        setAddButton()
-        setDiscardButton()
-    }
-
-    private fun enableButtons() {
-        binding.button1.isEnabled = true
-        binding.button2.isEnabled = true
-    }
-
-    private fun disableButtons() {
-        binding.button1.isEnabled = false
-        binding.button2.isEnabled = false
-    }
-
-    private fun setAddButton() {
-        binding.button1.setOnClickListener() {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                addAnchor()
-                enableButtons()
-            }
-        }
-    }
-
-    private suspend fun addAnchor() {
-        try {
-            viewModel.addAnchor(
-                Anchor(
-                    binding.field1EditText.text.toString(),
-                    binding.descriptionEditText.text.toString()
-                )
+        setBaseFragmentOptions(
+            BaseOptions(
+                titleText = getString(R.string.title_new_anchor),
+                isPrimaryButtonEnabled = true,
+                primaryButtonText = getString(R.string.button_discard),
+                primaryButtonOnClick = discardAnchor,
+                isSecondaryButtonEnabled = true,
+                secondaryButtonText = getString(R.string.button_add),
+                secondaryButtonOnClick = addAnchor
             )
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_anchor_added)
+        )
+
+        setFormFragmentOptions(
+            FormOptions(
+                isPrimaryTextFieldEnabled = true,
+                isPrimaryTextFieldEditable = true,
+                primaryTextFieldHint = getString(R.string.field_name),
+                primaryTextFieldText = null,
+                isSelectorEnabled = false,
+                isSelectorEditable = null,
+                selectorHint = null,
+                getSelectorText = null,
+                selectorOnClick = null,
+                isSecondaryTextFieldEnabled = true,
+                isSecondaryTextFieldEditable = true,
+                secondaryTextFieldHint = getString(R.string.field_anchor_id),
+                secondaryTextFieldText = null,
+                isSwitchEnabled = false,
+                switchText = null,
+                getIsSwitchChecked = null
             )
-            binding.field1EditText.text?.clear()
-            binding.descriptionEditText.text?.clear()
-        } catch (e: SQLiteConstraintException) {
-            viewModel.showMessage(
-                requireActivity(),
-                getString(R.string.message_duplicate_error, binding.field1EditText.text.toString())
-            )
-        }
+        )
+
     }
 
-    private fun setDiscardButton() {
-        binding.button2.setOnClickListener() {
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_anchor_discarded)
-                )
-                findNavController().navigateUp()
-            }
+    override fun onDestroyView() {
+        if (anchorId.isNotEmpty() || anchorName.isNotEmpty()) {
+            showSnackBar(getString(R.string.message_anchor_discarded))
         }
+        super.onDestroyView()
     }
+
 }

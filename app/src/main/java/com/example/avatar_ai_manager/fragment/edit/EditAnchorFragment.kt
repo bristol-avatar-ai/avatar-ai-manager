@@ -1,92 +1,87 @@
 package com.example.avatar_ai_manager.fragment.edit
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
-import com.example.avatar_ai_manager.databinding.FragmentEditDescriptionBinding
-import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
+import com.example.avatar_ai_manager.fragment.base.FormFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "EditAnchorFragment"
 
-private const val ARG_ANCHOR_ID = "anchorId"
-private const val ARG_DESCRIPTION = "description"
+class EditAnchorFragment : FormFragment() {
 
-class EditAnchorFragment : Fragment() {
+    private val args: EditAnchorFragmentArgs by navArgs()
 
-    private var anchorId: String? = null
-    private var description: String? = null
+    private val anchorName get() = getPrimaryFieldText()
 
-    private var _binding: FragmentEditDescriptionBinding? = null
-    private val binding get() = _binding!!
+    private val deleteAnchor: () -> Unit = {
+        lifecycleScope.launch(Dispatchers.IO) {
+            databaseViewModel.deleteAnchor(args.anchorId)
 
-    private val viewModel: DatabaseViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            anchorId = it.getString(ARG_ANCHOR_ID)
-            description = it.getString(ARG_DESCRIPTION)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentEditDescriptionBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.title.text = getString(R.string.title_anchor_id, anchorId)
-        binding.descriptionEditText.setText(description)
-        anchorId?.let {
-            setAmendButton(it)
-            setDeleteButton(it)
-        }
-    }
-
-    private fun enableButtons() {
-        binding.button1.isEnabled = true
-        binding.button2.isEnabled = true
-    }
-
-    private fun disableButtons() {
-        binding.button1.isEnabled = false
-        binding.button2.isEnabled = false
-    }
-
-    private fun setAmendButton(anchorId: String) {
-        binding.button1.setOnClickListener() {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.updateAnchor(anchorId, binding.descriptionEditText.text.toString())
-                viewModel.showMessage(
-                    requireActivity(),
-                    getString(R.string.message_description_amended)
-                )
-                enableButtons()
-            }
-        }
-    }
-
-    private fun setDeleteButton(anchorId: String) {
-        binding.button2.setOnClickListener() {
-            disableButtons()
-            lifecycleScope.launch(Dispatchers.Main) {
-                viewModel.deleteAnchor(anchorId)
-                viewModel.showMessage(requireActivity(), getString(R.string.message_anchor_deleted))
+            withContext(Dispatchers.Main) {
+                showSnackBar(getString(R.string.message_anchor_deleted))
                 findNavController().navigateUp()
             }
         }
     }
+
+    private val amendAnchor: () -> Unit = {
+        lifecycleScope.launch(Dispatchers.IO) {
+            databaseViewModel.updateAnchor(args.anchorId, anchorName)
+
+            withContext(Dispatchers.Main) {
+                showSnackBar(getString(R.string.message_anchor_updated))
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBaseFragmentOptions(
+            BaseOptions(
+                titleText = getString(R.string.title_edit_anchor),
+                isPrimaryButtonEnabled = true,
+                primaryButtonText = getString(R.string.button_delete),
+                primaryButtonOnClick = deleteAnchor,
+                isSecondaryButtonEnabled = true,
+                secondaryButtonText = getString(R.string.button_amend),
+                secondaryButtonOnClick = amendAnchor
+            )
+        )
+
+        setFormFragmentOptions(
+            FormOptions(
+                isPrimaryTextFieldEnabled = true,
+                isPrimaryTextFieldEditable = true,
+                primaryTextFieldHint = getString(R.string.field_name),
+                primaryTextFieldText = args.name,
+                isSelectorEnabled = false,
+                isSelectorEditable = null,
+                selectorHint = null,
+                getSelectorText = null,
+                selectorOnClick = null,
+                isSecondaryTextFieldEnabled = true,
+                isSecondaryTextFieldEditable = false,
+                secondaryTextFieldHint = getString(R.string.field_anchor_id),
+                secondaryTextFieldText = args.anchorId,
+                isSwitchEnabled = false,
+                switchText = null,
+                getIsSwitchChecked = null
+            )
+        )
+
+    }
+
+    override fun onDestroyView() {
+        if (anchorName != args.name) {
+            showSnackBar(getString(R.string.message_changes_discarded))
+        }
+        super.onDestroyView()
+    }
+
 }
