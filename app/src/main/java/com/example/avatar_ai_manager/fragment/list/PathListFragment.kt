@@ -5,35 +5,28 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
-import com.example.avatar_ai_manager.data.PathWithNames
-import com.example.avatar_ai_manager.fragment.base.ListFragment
+import com.example.avatar_ai_manager.data.AnchorWithPathCount
+import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
 
 private const val TAG = "PathListFragment"
 
-class PathListFragment : ListFragment<PathWithNames>() {
+class PathListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
 
     private val args: PathListFragmentArgs by navArgs()
 
-    private val addPath = {
+    private val showPathsAtAnchor = { anchor: AnchorWithPathCount ->
         saveScrollPositionAndNavigate(
-            PathListFragmentDirections.actionPathListFragmentToAddPathFragment(
-                args.originId,
-                args.originName,
-                null,
-                null,
-                null
+            PathListFragmentDirections.actionPathListFragmentToPathsAtAnchorListFragment(
+                anchor.id,
+                anchor.name
             )
         )
     }
 
-    private val editPath = { path: PathWithNames ->
+    private val showAnchors = {
         saveScrollPositionAndNavigate(
-            PathListFragmentDirections.actionPathListFragmentToEditPathFragment(
-                args.originId,
-                args.originName,
-                path.getDestinationId(args.originId),
-                path.getDestinationName(args.originId),
-                path.distance.toString()
+            PathListFragmentDirections.actionPathListFragmentToAnchorListFragment(
+                getScrollPosition().toString()
             )
         )
     }
@@ -43,10 +36,10 @@ class PathListFragment : ListFragment<PathWithNames>() {
 
         setBaseFragmentOptions(
             BaseOptions(
-                titleText = getString(R.string.title_path_list, args.originName),
-                isPrimaryButtonEnabled = true,
-                primaryButtonText = getString(R.string.button_add_path),
-                primaryButtonOnClick = addPath,
+                titleText = getString(R.string.title_paths_list),
+                isPrimaryButtonEnabled = false,
+                primaryButtonText = null,
+                primaryButtonOnClick = null,
                 isSecondaryButtonEnabled = false,
                 secondaryButtonText = null,
                 secondaryButtonOnClick = null
@@ -55,16 +48,24 @@ class PathListFragment : ListFragment<PathWithNames>() {
 
         setListFragmentOptions(
             ListOptions(
-                header1Text = getString(R.string.header_path_destination),
-                header2Text = getString(R.string.header_path_distance),
+                header1Text = getString(R.string.header_anchor_name),
+                header2Text = getString(R.string.header_anchor_path_number),
                 listAdaptor = ClickableListAdaptor.create(
-                    getColumn1Text = { it.getDestinationName(args.originId) },
-                    getColumn2Text = { it.distance.toString() },
-                    onClickedPrimary = editPath,
+                    getColumn1Text = { it.name },
+                    getColumn2Text = { it.pathCount.toString() },
+                    onClickedPrimary = showPathsAtAnchor,
                     onClickedSecondary = null
                 ),
-                getFlowList = { databaseViewModel.getPathsWithNamesFromAnchor(args.originId) },
-                navArgsScrollPosition = null
+                getFlowList = databaseViewModel::getAnchorsWithPathCounts,
+                navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
+            )
+        )
+
+        setListWithMenuFragmentOptions(
+            MainListOptions(
+                switchScreenButtonTitle = getString(R.string.button_show_anchors),
+                switchScreenButtonIcon = R.drawable.ic_anchor,
+                onSwitchScreen = showAnchors
             )
         )
 

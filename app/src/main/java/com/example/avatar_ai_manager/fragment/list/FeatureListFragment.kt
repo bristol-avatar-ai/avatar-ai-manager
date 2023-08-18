@@ -33,9 +33,9 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
         )
     }
 
-    private val showAnchorDescriptions = {
+    private val showAnchors = {
         saveScrollPositionAndNavigate(
-            FeatureListFragmentDirections.actionFeatureListFragmentToAnchorDescriptionListFragment(
+            FeatureListFragmentDirections.actionFeatureListFragmentToAnchorListFragment(
                 null
             )
         )
@@ -75,7 +75,7 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
             MainListOptions(
                 switchScreenButtonTitle = getString(R.string.button_show_anchors),
                 switchScreenButtonIcon = R.drawable.ic_anchor,
-                onSwitchScreen = showAnchorDescriptions
+                onSwitchScreen = showAnchors
             )
         )
 

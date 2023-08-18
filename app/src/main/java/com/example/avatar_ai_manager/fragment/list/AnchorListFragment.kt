@@ -8,27 +8,27 @@ import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
 import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
 
-private const val TAG = "AnchorDescriptionListFragment"
+private const val TAG = "AnchorListFragment"
 
-class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
+class AnchorListFragment : ListWithMenuFragment<Anchor>() {
 
-    private val args: AnchorDescriptionListFragmentArgs by navArgs()
+    private val args: AnchorListFragmentArgs by navArgs()
 
     private val addArAnchor = {
         saveScrollPositionAndNavigate(
-            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAddArAnchorFragment()
+            AnchorListFragmentDirections.actionAnchorListFragmentToAddArAnchorFragment()
         )
     }
 
     private val addAnchorReference = {
         saveScrollPositionAndNavigate(
-            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAddAnchorFragment()
+            AnchorListFragmentDirections.actionAnchorListFragmentToAddAnchorFragment()
         )
     }
 
-    private val editDescriptions = { anchor: Anchor ->
+    private val editAnchor = { anchor: Anchor ->
         saveScrollPositionAndNavigate(
-            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToEditAnchorFragment(
+            AnchorListFragmentDirections.actionAnchorListFragmentToEditAnchorFragment(
                 anchor.id,
                 anchor.name
             )
@@ -37,7 +37,7 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
 
     private val showAnchorPaths: () -> Unit = {
         saveScrollPositionAndNavigate(
-            AnchorDescriptionListFragmentDirections.actionAnchorDescriptionListFragmentToAnchorPathsListFragment(
+            AnchorListFragmentDirections.actionAnchorListFragmentToPathListFragment(
                 getScrollPosition().toString()
             )
         )
@@ -65,7 +65,7 @@ class AnchorDescriptionListFragment : ListWithMenuFragment<Anchor>() {
                 listAdaptor = ClickableListAdaptor.create(
                     getColumn1Text = { it.name },
                     getColumn2Text = { it.id },
-                    onClickedPrimary = { editDescriptions(it) },
+                    onClickedPrimary = { editAnchor(it) },
                     onClickedSecondary = null
                 ),
                 getFlowList = databaseViewModel::getAnchors,

@@ -219,7 +219,7 @@ class AddArAnchorFragment : Fragment() {
         } else {
             Log.e(TAG, "processCloudAnchor: Cloud Anchor Upload Failed")
             showSnackBar(getString(R.string.message_cloud_anchor_upload_failed))
-            // Navigate back to AnchorDescriptionListFragment
+            // Navigate back to AnchorListFragment
             findNavController().navigateUp()
         }
     }

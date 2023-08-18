@@ -10,8 +10,8 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_featureListFragment_to_anchorDescriptionListFragment"
-            app:destination="@id/anchorDescriptionListFragment" />
+            android:id="@+id/action_featureListFragment_to_anchorListFragment"
+            app:destination="@id/anchorListFragment" />
         <action
             android:id="@+id/action_featureListFragment_to_addFeatureFragment"
             app:destination="@id/addFeatureFragment" />
@@ -20,8 +20,8 @@
             app:destination="@id/editFeatureFragment" />
     </fragment>
     <fragment
-        android:id="@+id/pathListFragment"
-        android:name="com.example.avatar_ai_manager.fragment.list.PathListFragment"
+        android:id="@+id/pathsAtAnchorListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.PathsAtAnchorListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <argument
@@ -31,10 +31,10 @@
             android:name="originName"
             app:argType="string" />
         <action
-            android:id="@+id/action_pathListFragment_to_addPathFragment"
+            android:id="@+id/action_pathsAtAnchorListFragment_to_addPathFragment"
             app:destination="@id/addPathFragment" />
         <action
-            android:id="@+id/action_pathListFragment_to_editPathFragment"
+            android:id="@+id/action_pathsAtAnchorListFragment_to_editPathFragment"
             app:destination="@id/editPathFragment" />
     </fragment>
     <fragment
@@ -45,54 +45,54 @@
         <action
             android:id="@+id/action_addArAnchorFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment"
-            app:popUpTo="@id/anchorPathsListFragment" />
+            app:popUpTo="@id/pathListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/anchorDescriptionListFragment"
-        android:name="com.example.avatar_ai_manager.fragment.list.AnchorDescriptionListFragment"
+        android:id="@+id/anchorListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.AnchorListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_anchorDescriptionListFragment_to_anchorPathsListFragment"
-            app:destination="@id/anchorPathsListFragment"
-            app:popUpTo="@id/anchorDescriptionListFragment"
+            android:id="@+id/action_anchorListFragment_to_pathListFragment"
+            app:destination="@id/pathListFragment"
+            app:popUpTo="@id/anchorListFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_anchorDescriptionListFragment_to_addArAnchorFragment"
+            android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
         <argument
             android:name="scrollPosition"
             app:argType="string"
             app:nullable="true" />
         <action
-            android:id="@+id/action_anchorDescriptionListFragment_to_addAnchorFragment"
+            android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
         <action
-            android:id="@+id/action_anchorDescriptionListFragment_to_editAnchorFragment"
+            android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment" />
     </fragment>
     <fragment
-        android:id="@+id/anchorPathsListFragment"
-        android:name="com.example.avatar_ai_manager.fragment.list.AnchorPathsListFragment"
+        android:id="@+id/pathListFragment"
+        android:name="com.example.avatar_ai_manager.fragment.list.PathListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_anchorPathsListFragment_to_anchorDescriptionListFragment"
-            app:destination="@id/anchorDescriptionListFragment"
-            app:popUpTo="@id/anchorPathsListFragment"
+            android:id="@+id/action_pathListFragment_to_anchorListFragment"
+            app:destination="@id/anchorListFragment"
+            app:popUpTo="@id/pathListFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_anchorPathsListFragment_to_addArAnchorFragment"
+            android:id="@+id/action_pathListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
         <action
-            android:id="@+id/action_anchorPathsListFragment_to_pathListFragment"
-            app:destination="@id/pathListFragment" />
+            android:id="@+id/action_pathListFragment_to_pathsAtAnchorListFragment"
+            app:destination="@id/pathsAtAnchorListFragment" />
         <argument
             android:name="scrollPosition"
             app:argType="string"
             app:nullable="true" />
         <action
-            android:id="@+id/action_anchorPathsListFragment_to_addAnchorFragment"
+            android:id="@+id/action_pathListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
     </fragment>
     <fragment
