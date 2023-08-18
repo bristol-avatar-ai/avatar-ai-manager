@@ -58,8 +58,7 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
                     onClickedPrimary = editFeature,
                     onClickedSecondary = null
                 ),
-                getFlowList = databaseViewModel::getFeatures,
-                navArgsScrollPosition = null
+                getFlowList = databaseViewModel::getFeatures
             )
         )
 

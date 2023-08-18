@@ -63,8 +63,7 @@ class PathsAtAnchorListFragment : ListFragment<PathWithNames>() {
                     onClickedPrimary = editPath,
                     onClickedSecondary = null
                 ),
-                getFlowList = { databaseViewModel.getPathsWithNamesFromAnchor(args.originId) },
-                navArgsScrollPosition = null
+                getFlowList = { databaseViewModel.getPathsWithNamesFromAnchor(args.originId) }
             )
         )
 

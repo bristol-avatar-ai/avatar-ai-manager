@@ -82,8 +82,7 @@ class AnchorSelectionFragment : ListFragment<Anchor>() {
                     onClickedPrimary = { selectAnchor(it) },
                     onClickedSecondary = null
                 ),
-                getFlowList = databaseViewModel::getAnchors,
-                navArgsScrollPosition = null
+                getFlowList = databaseViewModel::getAnchors
             )
         )
 

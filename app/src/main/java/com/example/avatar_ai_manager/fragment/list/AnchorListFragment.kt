@@ -2,7 +2,6 @@ package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
@@ -11,8 +10,6 @@ import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
 private const val TAG = "AnchorListFragment"
 
 class AnchorListFragment : ListWithMenuFragment<Anchor>() {
-
-    private val args: AnchorListFragmentArgs by navArgs()
 
     private val addArAnchor = {
         saveScrollPositionAndNavigate(
@@ -60,8 +57,7 @@ class AnchorListFragment : ListWithMenuFragment<Anchor>() {
                     onClickedPrimary = { editAnchor(it) },
                     onClickedSecondary = null
                 ),
-                getFlowList = databaseViewModel::getAnchors,
-                navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
+                getFlowList = databaseViewModel::getAnchors
             )
         )
 

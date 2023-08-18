@@ -52,11 +52,6 @@
         <action
             android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
-        <argument
-            android:name="scrollPosition"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="0" />
         <action
             android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
             app:destination="@id/addAnchorFragment" />
@@ -72,11 +67,6 @@
         <action
             android:id="@+id/action_pathListFragment_to_pathsAtAnchorListFragment"
             app:destination="@id/pathsAtAnchorListFragment" />
-        <argument
-            android:name="scrollPosition"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/addAnchorFragment"
@@ -188,7 +178,7 @@
         android:id="@+id/addPathFragment"
         android:name="com.example.avatar_ai_manager.fragment.add.AddPathFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_form" >
+        tools:layout="@layout/fragment_form">
         <argument
             android:name="originId"
             app:argType="string" />

@@ -4,5 +4,4 @@ import androidx.lifecycle.ViewModel
 
 class UiStateViewModel : ViewModel() {
     var lastScrollPosition: Int? = null
-    var loadedFromNavArgs = false
 }

@@ -2,7 +2,6 @@ package com.example.avatar_ai_manager.fragment.list
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.adaptor.ClickableListAdaptor
 import com.example.avatar_ai_manager.data.AnchorWithPathCount
@@ -11,8 +10,6 @@ import com.example.avatar_ai_manager.fragment.base.ListWithMenuFragment
 private const val TAG = "PathListFragment"
 
 class PathListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
-
-    private val args: PathListFragmentArgs by navArgs()
 
     private val showPathsAtAnchor = { anchor: AnchorWithPathCount ->
         saveScrollPositionAndNavigate(
@@ -48,8 +45,7 @@ class PathListFragment : ListWithMenuFragment<AnchorWithPathCount>() {
                     onClickedPrimary = showPathsAtAnchor,
                     onClickedSecondary = null
                 ),
-                getFlowList = databaseViewModel::getAnchorsWithPathCounts,
-                navArgsScrollPosition = args.scrollPosition?.toIntOrNull()
+                getFlowList = databaseViewModel::getAnchorsWithPathCounts
             )
         )
 

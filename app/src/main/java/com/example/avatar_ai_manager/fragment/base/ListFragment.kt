@@ -25,8 +25,7 @@ abstract class ListFragment<T> : BaseFragment() {
         val header1Text: String,
         val header2Text: String,
         val listAdaptor: ClickableListAdaptor<T>,
-        val getFlowList: (() -> Flow<List<T>>?)?,
-        val navArgsScrollPosition: Int?
+        val getFlowList: (() -> Flow<List<T>>?)?
     )
 
     private var _innerBinding: FragmentListBinding? = null
@@ -69,18 +68,10 @@ abstract class ListFragment<T> : BaseFragment() {
         innerBinding.header2.text = options.header2Text
         innerBinding.recyclerView.adapter = options.listAdaptor
         getFlowList = options.getFlowList
-        saveNavArgsScrollPosition(options)
 
         // Call and then reset addDatabaseObserver if it has been queued.
         delayAddDatabaseObserver?.invoke()
         delayAddDatabaseObserver = null
-    }
-
-    private fun saveNavArgsScrollPosition(options: ListOptions<T>) {
-        if (options.navArgsScrollPosition != null && !uiStateViewModel.loadedFromNavArgs) {
-            uiStateViewModel.lastScrollPosition = options.navArgsScrollPosition
-            uiStateViewModel.loadedFromNavArgs = true
-        }
     }
 
     override fun onDatabaseLoading() {
@@ -136,12 +127,9 @@ abstract class ListFragment<T> : BaseFragment() {
     }
 
     protected fun saveScrollPositionAndNavigate(directions: NavDirections) {
-        uiStateViewModel.lastScrollPosition = getScrollPosition()
+        uiStateViewModel.lastScrollPosition =
+            (innerBinding.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         findNavController().navigate(directions)
-    }
-
-    protected fun getScrollPosition(): Int {
-        return (innerBinding.recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
     }
 
     override fun onDestroyView() {

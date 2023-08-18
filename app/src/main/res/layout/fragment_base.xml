@@ -48,7 +48,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_primary"
             style="@style/Widget.Base.Button"
-            android:layout_marginBottom="@dimen/margin"
+            android:layout_marginBottom="@dimen/margin_between_elements"
             android:backgroundTint="?attr/colorPrimary"
             tools:text="@string/button_add_ar_anchor"
             tools:visibility="visible" />
