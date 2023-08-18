@@ -26,7 +26,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/selector"
             style="@style/Widget.Form.Selector"
-            tools:text="@string/field_select_destination"
+            tools:hint="@string/field_select_destination"
             tools:visibility="visible" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -46,6 +46,7 @@
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_selector"
             style="@style/SwitchSelector"
+            tools:checked="true"
             tools:text="Primary Feature"
             tools:visibility="visible" />
 

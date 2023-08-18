@@ -30,7 +30,7 @@ class EditAnchorFragment : FormFragment() {
         }
     }
 
-    private val updateAnchor: () -> Unit = {
+    private val amendAnchor: () -> Unit = {
         lifecycleScope.launch(Dispatchers.IO) {
             databaseViewModel.updateAnchor(args.anchorId, anchorName)
 
@@ -50,7 +50,7 @@ class EditAnchorFragment : FormFragment() {
                 primaryButtonOnClick = deleteAnchor,
                 isSecondaryButtonEnabled = true,
                 secondaryButtonText = getString(R.string.button_amend),
-                secondaryButtonOnClick = updateAnchor
+                secondaryButtonOnClick = amendAnchor
             )
         )
 
@@ -62,14 +62,16 @@ class EditAnchorFragment : FormFragment() {
                 primaryTextFieldText = args.name,
                 isSelectorEnabled = false,
                 isSelectorEditable = null,
-                selectorText = null,
+                selectorHint = null,
+                getSelectorText = null,
                 selectorOnClick = null,
                 isSecondaryTextFieldEnabled = true,
                 isSecondaryTextFieldEditable = false,
                 secondaryTextFieldHint = getString(R.string.field_anchor_id),
                 secondaryTextFieldText = args.anchorId,
                 isSwitchEnabled = false,
-                switchText = null
+                switchText = null,
+                getIsSwitchChecked = null
             )
         )
 

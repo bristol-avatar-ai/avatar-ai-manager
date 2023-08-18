@@ -20,7 +20,6 @@ class AddAnchorFragment : FormFragment() {
     private val anchorId get() = getSecondaryFieldText()
 
     private val discardAnchor: () -> Unit = {
-        showSnackBar(getString(R.string.message_anchor_discarded))
         findNavController().navigateUp()
     }
 
@@ -35,7 +34,7 @@ class AddAnchorFragment : FormFragment() {
                     clearFields()
                 }
             } catch (e: SQLiteConstraintException) {
-                showSnackBar(getString(R.string.message_duplicate_error, getPrimaryFieldText()))
+                showSnackBar(getString(R.string.message_duplicate_error, anchorId))
             }
         }
     }
@@ -62,14 +61,16 @@ class AddAnchorFragment : FormFragment() {
                 primaryTextFieldText = null,
                 isSelectorEnabled = false,
                 isSelectorEditable = null,
-                selectorText = null,
+                selectorHint = null,
+                getSelectorText = null,
                 selectorOnClick = null,
                 isSecondaryTextFieldEnabled = true,
                 isSecondaryTextFieldEditable = true,
                 secondaryTextFieldHint = getString(R.string.field_anchor_id),
                 secondaryTextFieldText = null,
                 isSwitchEnabled = false,
-                switchText = null
+                switchText = null,
+                getIsSwitchChecked = null
             )
         )
 

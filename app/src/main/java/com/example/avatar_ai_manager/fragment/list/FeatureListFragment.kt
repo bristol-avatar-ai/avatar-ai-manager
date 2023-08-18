@@ -12,11 +12,25 @@ private const val TAG = "FeatureListFragment"
 class FeatureListFragment : ListWithMenuFragment<Feature>() {
 
     private val addFeature = {
-
+        saveScrollPositionAndNavigate(
+            FeatureListFragmentDirections.actionFeatureListFragmentToAddFeatureFragment(
+                null,
+                null,
+                null,
+                null
+            )
+        )
     }
 
-    private val onFeatureClicked = { _: Feature ->
-
+    private val editFeature = { feature: Feature ->
+        saveScrollPositionAndNavigate(
+            FeatureListFragmentDirections.actionFeatureListFragmentToEditFeatureFragment(
+                feature.name,
+                feature.anchor,
+                null,
+                feature.description
+            )
+        )
     }
 
     private val showAnchorDescriptions = {
@@ -49,7 +63,7 @@ class FeatureListFragment : ListWithMenuFragment<Feature>() {
                 listAdaptor = ClickableListAdaptor.create(
                     getColumn1Text = { it.name },
                     getColumn2Text = { it.description },
-                    onClickedPrimary = onFeatureClicked,
+                    onClickedPrimary = editFeature,
                     onClickedSecondary = null
                 ),
                 getFlowList = databaseViewModel::getFeatures,

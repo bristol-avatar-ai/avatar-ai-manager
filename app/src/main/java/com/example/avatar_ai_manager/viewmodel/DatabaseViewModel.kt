@@ -11,6 +11,7 @@ import com.example.avatar_ai_cloud_storage.database.AppDatabase
 import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_cloud_storage.database.entity.Feature
 import com.example.avatar_ai_cloud_storage.database.entity.Path
+import com.example.avatar_ai_cloud_storage.database.entity.PrimaryFeature
 import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.example.avatar_ai_manager.DatabaseApplication
 import com.example.avatar_ai_manager.data.AnchorWithPathCount
@@ -40,8 +41,9 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         set(value) {
             getApplication<DatabaseApplication>().database = value
         }
-    private val anchorDao get() = database?.anchorDao()
     private val featureDao get() = database?.featureDao()
+    private val primaryFeatureDao get() = database?.primaryFeatureDao()
+    private val anchorDao get() = database?.anchorDao()
     private val pathDao get() = database?.pathDao()
 
     init {
@@ -114,8 +116,24 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         featureDao?.delete(name)
     }
 
+    suspend fun isPrimaryFeature(name: String, anchorId: String): Boolean {
+        return primaryFeatureDao?.getPrimaryFeature(anchorId)?.feature == name
+    }
+
+    suspend fun addPrimaryFeature(anchorId: String, featureName: String) {
+        primaryFeatureDao?.insert(PrimaryFeature(anchorId, featureName))
+    }
+
+    suspend fun deletePrimaryFeature(featureName: String) {
+        primaryFeatureDao?.delete(featureName)
+    }
+
     fun getAnchors(): Flow<List<Anchor>>? {
         return anchorDao?.getAnchorsFlow()
+    }
+
+    suspend fun getAnchor(anchorId: String): Anchor? {
+        return anchorDao?.getAnchor(anchorId)
     }
 
     suspend fun addAnchor(anchor: Anchor) {

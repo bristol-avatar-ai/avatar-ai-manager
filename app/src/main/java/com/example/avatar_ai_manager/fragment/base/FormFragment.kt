@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.example.avatar_ai_manager.databinding.FragmentFormBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "FormFragment"
 
@@ -17,14 +20,16 @@ abstract class FormFragment : BaseFragment() {
         val primaryTextFieldText: String?,
         val isSelectorEnabled: Boolean,
         val isSelectorEditable: Boolean?,
-        val selectorText: String?,
+        val selectorHint: String?,
+        val getSelectorText: (suspend () -> String?)?,
         val selectorOnClick: (() -> Unit)?,
         val isSecondaryTextFieldEnabled: Boolean,
         val isSecondaryTextFieldEditable: Boolean?,
         val secondaryTextFieldHint: String?,
         val secondaryTextFieldText: String?,
         val isSwitchEnabled: Boolean,
-        val switchText: String?
+        val switchText: String?,
+        val getIsSwitchChecked: (suspend () -> Boolean)?
     )
 
     private var _innerBinding: FragmentFormBinding? = null
@@ -60,7 +65,12 @@ abstract class FormFragment : BaseFragment() {
         if (options.isSelectorEnabled) {
             innerBinding.selector.visibility = View.VISIBLE
             innerBinding.selector.isEnabled = options.isSelectorEditable ?: true
-            innerBinding.selector.text = options.selectorText
+            innerBinding.selector.hint = options.selectorHint
+            options.getSelectorText?.let { getSelectorText ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    innerBinding.selector.text = getSelectorText()
+                }
+            }
             options.selectorOnClick?.let {
                 innerBinding.selector.setOnClickListener { it() }
             }
@@ -80,15 +90,16 @@ abstract class FormFragment : BaseFragment() {
         if (options.isSwitchEnabled) {
             innerBinding.switchSelector.visibility = View.VISIBLE
             innerBinding.switchSelector.text = options.switchText
+            options.getIsSwitchChecked?.let { getIsSwitchChecked ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    innerBinding.switchSelector.isChecked = getIsSwitchChecked()
+                }
+            }
         }
     }
 
     protected fun getPrimaryFieldText(): String {
         return innerBinding.textEditPrimary.text.toString()
-    }
-
-    protected fun getSelectorText(): String {
-        return innerBinding.selector.text.toString()
     }
 
     protected fun getSecondaryFieldText(): String {

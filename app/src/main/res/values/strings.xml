@@ -45,6 +45,8 @@
     <string name="header_path_distance">Distance</string>
     <!-- Add/Edit Fields -->
     <string name="field_name">Name</string>
+    <string name="field_select_anchor">Select Anchor</string>
+    <string name="field_anchor">Anchor: %s</string>
     <string name="field_description">Description</string>
     <string name="field_primary_feature">Primary Feature</string>
     <string name="field_anchor_id">Anchor ID</string>
@@ -62,6 +64,7 @@
     <string name="message_feature_discarded">Feature Discarded</string>
     <string name="message_feature_updated">Feature Updated</string>
     <string name="message_feature_deleted">Feature Deleted</string>
+    <string name="message_anchor_required">Anchor Selection Required</string>
     <!-- Add/Edit Anchor Fragment -->
     <string name="title_new_anchor">New Anchor</string>
     <string name="title_edit_anchor">Edit Anchor</string>
@@ -78,4 +81,6 @@
     <string name="message_path_discarded">Path Discarded</string>
     <string name="message_path_updates">Path Updated</string>
     <string name="message_path_deleted">Path Deleted</string>
+    <!--Anchor Selection Fragment-->
+    <string name="title_select_anchor">Select Anchor</string>
 </resources>
