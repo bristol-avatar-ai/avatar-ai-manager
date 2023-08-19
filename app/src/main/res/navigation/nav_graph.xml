@@ -42,7 +42,8 @@
         <action
             android:id="@+id/action_addArAnchorFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment"
-            app:popUpTo="@id/pathListFragment" />
+            app:popUpTo="@id/anchorListFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/anchorListFragment"
