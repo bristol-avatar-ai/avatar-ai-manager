@@ -11,15 +11,9 @@ private const val TAG = "AnchorListFragment"
 
 class AnchorListFragment : ListWithMenuFragment<Anchor>() {
 
-    private val addArAnchor = {
+    private val addAnchor = {
         saveScrollPositionAndNavigate(
             AnchorListFragmentDirections.actionAnchorListFragmentToAddArAnchorFragment()
-        )
-    }
-
-    private val addAnchorReference = {
-        saveScrollPositionAndNavigate(
-            AnchorListFragmentDirections.actionAnchorListFragmentToAddAnchorFragment()
         )
     }
 
@@ -40,20 +34,20 @@ class AnchorListFragment : ListWithMenuFragment<Anchor>() {
                 titleText = getString(R.string.title_anchor_list),
                 isPrimaryButtonEnabled = true,
                 primaryButtonText = getString(R.string.button_add_ar_anchor),
-                primaryButtonOnClick = addArAnchor,
-                isSecondaryButtonEnabled = true,
-                secondaryButtonText = getString(R.string.button_add_anchor),
-                secondaryButtonOnClick = addAnchorReference
+                primaryButtonOnClick = addAnchor,
+                isSecondaryButtonEnabled = false,
+                secondaryButtonText = null,
+                secondaryButtonOnClick = null
             )
         )
 
         setListFragmentOptions(
             ListOptions(
                 header1Text = getString(R.string.header_anchor_name),
-                header2Text = getString(R.string.header_anchor_id),
+                header2Text = getString(R.string.header_days_to_expiration),
                 listAdaptor = ClickableListAdaptor.create(
                     getColumn1Text = { it.name },
-                    getColumn2Text = { it.id },
+                    getColumn2Text = { it.daysToExpiration },
                     onClickedPrimary = { editAnchor(it) },
                     onClickedSecondary = null
                 ),

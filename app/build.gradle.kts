@@ -19,10 +19,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Add API as a Manifest Placeholder
-        manifestPlaceholders["cloud_anchors_api_key"] =  project.property("CLOUD_ANCHORS_API_KEY").toString()
+        manifestPlaceholders["cloud_anchors_api_key"] =
+            project.property("CLOUD_ANCHORS_API_KEY").toString()
     }
 
     buildTypes {
+        all {
+            val cloudAnchorsBearerToken = project.property("CLOUD_ANCHORS_BEARER_TOKEN")
+            buildConfigField("String", "CLOUD_ANCHORS_BEARER_TOKEN", "$cloudAnchorsBearerToken")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -39,6 +45,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 
@@ -67,6 +74,14 @@ dependencies {
     implementation("io.github.sceneview:arsceneview:0.10.0")
     // AR Core
     implementation("com.google.ar:core:1.38.0")
+
+    // WEb Service Libraries
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    // Moshi
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+    // Retrofit with Moshi Converter
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 
     testImplementation("junit:junit:4.13.2")
 

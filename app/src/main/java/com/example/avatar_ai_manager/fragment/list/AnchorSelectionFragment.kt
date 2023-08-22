@@ -75,7 +75,7 @@ class AnchorSelectionFragment : ListFragment<Anchor>() {
         setListFragmentOptions(
             ListOptions(
                 header1Text = getString(R.string.header_anchor_name),
-                header2Text = getString(R.string.header_anchor_id),
+                header2Text = getString(R.string.header_days_to_expiration),
                 listAdaptor = ClickableListAdaptor.create(
                     getColumn1Text = { it.name },
                     getColumn2Text = { it.id },

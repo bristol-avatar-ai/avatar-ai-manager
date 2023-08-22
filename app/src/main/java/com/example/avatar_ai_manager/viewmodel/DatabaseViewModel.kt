@@ -16,6 +16,7 @@ import com.example.avatar_ai_cloud_storage.network.CloudStorageApi
 import com.example.avatar_ai_manager.DatabaseApplication
 import com.example.avatar_ai_manager.data.AnchorWithPathCount
 import com.example.avatar_ai_manager.data.PathWithNames
+import com.example.avatar_ai_manager.network.CloudAnchorApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,6 +24,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 private const val TAG = "DatabaseViewModel"
+
+private const val EXPIRED = "Expired"
 
 class DatabaseViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -52,21 +55,38 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun postStatus(status: Status) {
-        if (status == Status.ERROR) {
-            Log.w(TAG, "Status: $status")
-        } else {
-            Log.i(TAG, "Status: $status")
-        }
-        _status.postValue(status)
-    }
-
     private suspend fun load() {
         if (database == null) {
             postStatus(Status.LOADING)
             database = AppDatabase.getDatabase(context)
         }
+
+        val cloudAnchors = CloudAnchorApi.getAnchors()
+        if (cloudAnchors != null) {
+            refreshExpirationDates(cloudAnchors)
+            addMissingAnchors(cloudAnchors)
+        } else {
+            database = null
+        }
+
         updateStatus()
+    }
+
+    private suspend fun refreshExpirationDates(cloudAnchors: Map<String, String>) {
+        database?.anchorDao()?.getAnchors()?.forEach { anchor ->
+            database?.anchorDao()?.updateExpiration(
+                anchor.id,
+                cloudAnchors[anchor.id] ?: EXPIRED
+            )
+        }
+    }
+
+    private suspend fun addMissingAnchors(cloudAnchors: Map<String, String>) {
+        cloudAnchors.forEach {
+            database?.anchorDao()?.insertIfNotPresent(
+                Anchor(it.key, it.key, it.value)
+            )
+        }
     }
 
     private fun updateStatus() {
@@ -77,6 +97,15 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
                 Status.READY
             }
         )
+    }
+
+    private fun postStatus(status: Status) {
+        if (status == Status.ERROR) {
+            Log.w(TAG, "Status: $status")
+        } else {
+            Log.i(TAG, "Status: $status")
+        }
+        _status.postValue(status)
     }
 
     suspend fun reload() {

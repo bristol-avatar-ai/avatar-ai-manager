@@ -17,6 +17,7 @@ import com.example.avatar_ai_cloud_storage.database.entity.Anchor
 import com.example.avatar_ai_manager.MainActivity
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.databinding.FragmentAddArAnchorBinding
+import com.example.avatar_ai_manager.network.CloudAnchorApi
 import com.example.avatar_ai_manager.viewmodel.DatabaseViewModel
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.ar.core.Config
@@ -31,6 +32,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG = "AddArAnchorFragment"
+
+private const val REFRESH_TO_UPDATE = "Refresh to update"
 
 class AddArAnchorFragment : Fragment() {
 
@@ -233,20 +236,32 @@ class AddArAnchorFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (databaseViewModel.status.value == DatabaseViewModel.Status.READY) {
                 try {
-                    databaseViewModel.addAnchor(
-                        Anchor(anchorId, "")
-                    )
+                    extendAndAddAnchor(anchorId)
                 } catch (e: SQLiteConstraintException) {
                     databaseViewModel.updateAnchor(anchorId, "")
                     Log.w(TAG, "Anchor Id already exists in database", e)
                 }
                 showSnackBar(getString(R.string.message_anchor_added))
+                navigateToEditAnchorFragment(anchorId)
             } else {
                 Log.e(TAG, "addAnchorToDatabase: database not ready")
                 showSnackBar(getString(R.string.message_anchor_insertion_failed))
+                findNavController().navigateUp()
             }
-            navigateToEditAnchorFragment(anchorId)
         }
+    }
+
+    private suspend fun extendAndAddAnchor(anchorId: String) {
+        val cloudAnchor = CloudAnchorApi.extendAnchor(anchorId)
+        if (cloudAnchor == null) {
+            showSnackBar(getString(R.string.message_anchor_extension_failed))
+        }
+
+        val daysToExpiration = cloudAnchor?.expireTime?.let {
+            CloudAnchorApi.getDaysToExpiration(it)
+        } ?: REFRESH_TO_UPDATE
+
+        databaseViewModel.addAnchor(Anchor(anchorId, "", daysToExpiration))
     }
 
     /*

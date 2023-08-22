@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.avatar_ai_manager.R
 import com.example.avatar_ai_manager.fragment.base.FormFragment
+import com.example.avatar_ai_manager.network.CloudAnchorApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,22 +21,30 @@ class EditAnchorFragment : FormFragment() {
     private val anchorName get() = getPrimaryFieldText()
 
     private val deleteAnchor: () -> Unit = {
+        disableButtons()
         lifecycleScope.launch(Dispatchers.IO) {
-            databaseViewModel.deleteAnchor(args.anchorId)
+            if (CloudAnchorApi.deleteAnchor(args.anchorId)) {
+                databaseViewModel.deleteAnchor(args.anchorId)
 
-            withContext(Dispatchers.Main) {
-                showSnackBar(getString(R.string.message_anchor_deleted))
-                findNavController().navigateUp()
+                withContext(Dispatchers.Main) {
+                    showSnackBar(getString(R.string.message_anchor_deleted))
+                    findNavController().navigateUp()
+                }
+            } else {
+                showSnackBar(getString(R.string.message_anchor_delete_failed))
+                enableButtons()
             }
         }
     }
 
-    private val amendAnchor: () -> Unit = {
+    private val updateAnchor: () -> Unit = {
+        disableButtons()
         lifecycleScope.launch(Dispatchers.IO) {
             databaseViewModel.updateAnchor(args.anchorId, anchorName)
 
             withContext(Dispatchers.Main) {
                 showSnackBar(getString(R.string.message_anchor_updated))
+                enableButtons()
             }
         }
     }
@@ -50,7 +59,7 @@ class EditAnchorFragment : FormFragment() {
                 primaryButtonOnClick = deleteAnchor,
                 isSecondaryButtonEnabled = true,
                 secondaryButtonText = getString(R.string.button_amend),
-                secondaryButtonOnClick = amendAnchor
+                secondaryButtonOnClick = updateAnchor
             )
         )
 

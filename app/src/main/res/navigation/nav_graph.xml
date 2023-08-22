@@ -54,9 +54,6 @@
             android:id="@+id/action_anchorListFragment_to_addArAnchorFragment"
             app:destination="@id/addArAnchorFragment" />
         <action
-            android:id="@+id/action_anchorListFragment_to_addAnchorFragment"
-            app:destination="@id/addAnchorFragment" />
-        <action
             android:id="@+id/action_anchorListFragment_to_editAnchorFragment"
             app:destination="@id/editAnchorFragment" />
     </fragment>
@@ -69,11 +66,6 @@
             android:id="@+id/action_pathListFragment_to_pathsAtAnchorListFragment"
             app:destination="@id/pathsAtAnchorListFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/addAnchorFragment"
-        android:name="com.example.avatar_ai_manager.fragment.add.AddAnchorFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_form" />
     <fragment
         android:id="@+id/editAnchorFragment"
         android:name="com.example.avatar_ai_manager.fragment.edit.EditAnchorFragment"
