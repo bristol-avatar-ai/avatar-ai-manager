@@ -163,9 +163,14 @@ object CloudAnchorApi {
                 true
             }
         } catch (e: HttpException) {
-            val httpError = e.response()?.errorBody()?.string() ?: "Unknown error"
-            Log.e(TAG, "deleteAnchor: HTTP error: $httpError", e)
-            false
+            return if (e.code() == 404) {
+                Log.w(TAG, "deleteAnchor: cloud anchor not found", e)
+                true
+            } else {
+                val httpError = e.response()?.errorBody()?.string() ?: "Unknown error"
+                Log.e(TAG, "deleteAnchor: HTTP error: $httpError", e)
+                false
+            }
         } catch (e: Exception) {
             Log.e(TAG, e.stackTraceToString())
             false
