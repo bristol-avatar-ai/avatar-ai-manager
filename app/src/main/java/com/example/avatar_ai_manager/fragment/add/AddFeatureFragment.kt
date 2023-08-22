@@ -31,6 +31,7 @@ class AddFeatureFragment : FormFragment() {
 
     private val addFeature: () -> Unit = {
         if (!args.anchorId.isNullOrEmpty()) {
+            disableButtons()
             lifecycleScope.launch(Dispatchers.IO) {
                 addFeatureToDatabase()
                 checkIfPrimaryFeature()
@@ -38,6 +39,7 @@ class AddFeatureFragment : FormFragment() {
                 withContext(Dispatchers.Main) {
                     showSnackBar(getString(R.string.message_feature_added))
                     clearFields()
+                    enableButtons()
                 }
             }
         } else {
