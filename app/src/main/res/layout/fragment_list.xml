@@ -38,7 +38,7 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/header_anchor_id" />
+        tools:text="@string/header_anchor_name" />
 
     <TextView
         android:id="@+id/header_2"
@@ -51,7 +51,7 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/header_1"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/header_anchor_name" />
+        tools:text="@string/header_days_to_expiration" />
 
     <View
         android:id="@+id/divider"
@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@+id/recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_1" />
+        app:layout_constraintTop_toBottomOf="@+id/header_2" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
