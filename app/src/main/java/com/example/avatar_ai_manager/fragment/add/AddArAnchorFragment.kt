@@ -241,7 +241,6 @@ class AddArAnchorFragment : Fragment() {
                     databaseViewModel.updateAnchor(anchorId, "")
                     Log.w(TAG, "Anchor Id already exists in database", e)
                 }
-                showSnackBar(getString(R.string.message_anchor_added))
                 navigateToEditAnchorFragment(anchorId)
             } else {
                 Log.e(TAG, "addAnchorToDatabase: database not ready")
@@ -254,7 +253,9 @@ class AddArAnchorFragment : Fragment() {
     private suspend fun extendAndAddAnchor(anchorId: String) {
         val cloudAnchor = CloudAnchorApi.extendAnchor(anchorId)
         if (cloudAnchor == null) {
-            showSnackBar(getString(R.string.message_anchor_extension_failed))
+            withContext(Dispatchers.Main) {
+                showSnackBar(getString(R.string.message_anchor_extension_failed))
+            }
         }
 
         val daysToExpiration = cloudAnchor?.expireTime?.let {
@@ -270,6 +271,7 @@ class AddArAnchorFragment : Fragment() {
     private suspend fun navigateToEditAnchorFragment(anchorId: String) {
         // Switch back to main thread.
         withContext(Dispatchers.Main) {
+            showSnackBar(getString(R.string.message_anchor_added))
             findNavController().navigate(
                 AddArAnchorFragmentDirections.actionAddArAnchorFragmentToEditAnchorFragment(
                     anchorId,

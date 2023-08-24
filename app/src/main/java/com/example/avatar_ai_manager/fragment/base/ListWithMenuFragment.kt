@@ -87,15 +87,13 @@ abstract class ListWithMenuFragment<T> : ListFragment<T>() {
     }
 
     private fun upload() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (databaseViewModel.upload()) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (withContext(Dispatchers.Main) { databaseViewModel.upload() }) {
                 showSnackBar(getString(R.string.message_upload_success))
             } else {
                 showSnackBar(getString(R.string.message_upload_failure))
             }
-            withContext(Dispatchers.Main) {
-                enableButtons()
-            }
+            enableButtons()
         }
     }
 
