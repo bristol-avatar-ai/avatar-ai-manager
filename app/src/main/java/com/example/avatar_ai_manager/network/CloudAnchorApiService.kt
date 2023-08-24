@@ -3,6 +3,9 @@ package com.example.avatar_ai_manager.network
 import android.annotation.SuppressLint
 import android.util.Log
 import com.example.avatar_ai_manager.BuildConfig
+import com.example.avatar_ai_manager.BuildConfig.PRIVATE_KEY_ID
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.auth.oauth2.ServiceAccountCredentials
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.withTimeout
@@ -25,6 +28,13 @@ private const val TAG = "CloudAnchorApiService"
 
 private const val EXPIRED = "Expired"
 
+// TOKEN CREDENTIALS
+private const val CLIENT_ID = BuildConfig.CLIENT_ID
+private const val CLIENT_EMAIL = BuildConfig.CLIENT_EMAIL
+private const val PRIVATE_KEY = BuildConfig.PRIVATE_KEY
+private const val PRIVATE_KEY_ID = BuildConfig.PRIVATE_KEY_ID
+private const val SCOPE = "https://www.googleapis.com/auth/arcore.management"
+
 // SERVICE CREDENTIALS
 // URL Details
 private const val BASE_URL = "https://arcore.googleapis.com"
@@ -34,7 +44,6 @@ private const val ANCHOR_ID = "anchorId"
 // Request Headers
 private const val AUTHORISATION_HEADER = "Authorization"
 private const val BEARER_PREFIX = "Bearer"
-private const val TOKEN = BuildConfig.CLOUD_ANCHORS_BEARER_TOKEN
 private const val CONTENT_TYPE = "Content-Type: application/json"
 
 // Request Queries
@@ -104,6 +113,27 @@ object CloudAnchorApi {
         retrofit.create(CloudAnchorApiService::class.java)
     }
 
+    private var credentials: GoogleCredentials? = null
+
+    private fun getToken(): String? {
+        return try {
+            if (credentials == null) {
+                credentials = ServiceAccountCredentials.fromPkcs8(
+                    CLIENT_ID,
+                    CLIENT_EMAIL,
+                    PRIVATE_KEY,
+                    PRIVATE_KEY_ID,
+                    listOf(SCOPE)
+                )
+            }
+            credentials?.refreshIfExpired()
+            return credentials?.accessToken?.tokenValue
+        } catch (e: Exception) {
+            Log.e(TAG, e.stackTraceToString())
+            null
+        }
+    }
+
     private suspend fun <T> execute(request: suspend () -> T): T? {
         return try {
             withTimeout(TIMEOUT_MS) {
@@ -120,10 +150,12 @@ object CloudAnchorApi {
     }
 
     suspend fun getAnchors(): Map<String, String>? {
-        return execute {
-            retrofitService.getAnchors("$BEARER_PREFIX $TOKEN", PAGE_SIZE).anchors?.associateBy(
-                { it.name.substring(8) }, { getDaysToExpiration(it.expireTime) }
-            ) ?: emptyMap()
+        return getToken()?.let { token ->
+            execute {
+                retrofitService.getAnchors("$BEARER_PREFIX $token", PAGE_SIZE).anchors?.associateBy(
+                    { it.name.substring(8) }, { getDaysToExpiration(it.expireTime) }
+                ) ?: emptyMap()
+            }
         }
     }
 
@@ -145,34 +177,42 @@ object CloudAnchorApi {
     }
 
     suspend fun extendAnchor(anchorId: String): CloudAnchor? {
-        return execute {
-            val requestBody = ExtendAnchorRequestBody(
-                retrofitService.getAnchor(
-                    anchorId,
-                    "$BEARER_PREFIX $TOKEN"
-                ).maximumExpireTime
-            )
-            retrofitService.extendAnchor(anchorId, "$BEARER_PREFIX $TOKEN", requestBody)
+        return getToken()?.let { token ->
+            execute {
+                val requestBody = ExtendAnchorRequestBody(
+                    retrofitService.getAnchor(
+                        anchorId,
+                        "$BEARER_PREFIX $token"
+                    ).maximumExpireTime
+                )
+                retrofitService.extendAnchor(anchorId, "$BEARER_PREFIX $token", requestBody)
+            }
         }
     }
 
     suspend fun deleteAnchor(anchorId: String): Boolean {
-        return try {
-            withTimeout(TIMEOUT_MS) {
-                retrofitService.deleteAnchor(anchorId, "$BEARER_PREFIX $TOKEN")
-                true
-            }
-        } catch (e: HttpException) {
-            return if (e.code() == 404) {
-                Log.w(TAG, "deleteAnchor: cloud anchor not found", e)
-                true
-            } else {
-                val httpError = e.response()?.errorBody()?.string() ?: "Unknown error"
-                Log.e(TAG, "deleteAnchor: HTTP error: $httpError", e)
+        return getToken()?.let { token ->
+            try {
+                withTimeout(TIMEOUT_MS) {
+                    retrofitService.deleteAnchor(anchorId, "$BEARER_PREFIX $token")
+                    true
+                }
+            } catch (e: HttpException) {
+                return processDeleteAnchorHttpException(e)
+            } catch (e: Exception) {
+                Log.e(TAG, e.stackTraceToString())
                 false
             }
-        } catch (e: Exception) {
-            Log.e(TAG, e.stackTraceToString())
+        } ?: false
+    }
+
+    private fun processDeleteAnchorHttpException(e: HttpException): Boolean {
+        return if (e.code() == 404) {
+            Log.w(TAG, "deleteAnchor: cloud anchor not found", e)
+            true
+        } else {
+            val httpError = e.response()?.errorBody()?.string() ?: "Unknown error"
+            Log.e(TAG, "deleteAnchor: HTTP error: $httpError", e)
             false
         }
     }

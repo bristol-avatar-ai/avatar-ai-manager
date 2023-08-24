@@ -25,8 +25,17 @@ android {
 
     buildTypes {
         all {
-            val cloudAnchorsBearerToken = project.property("CLOUD_ANCHORS_BEARER_TOKEN")
-            buildConfigField("String", "CLOUD_ANCHORS_BEARER_TOKEN", "$cloudAnchorsBearerToken")
+            // Load Google Cloud Anchors Management API from gradle.properties
+            val clientId = project.property("CLIENT_ID")
+            val clientEmail = project.property("CLIENT_EMAIL")
+            val privateKey = project.property("PRIVATE_KEY")
+            val privateKeyId = project.property("PRIVATE_KEY_ID")
+
+            // Initialise the credentials as BuildConfig fields.
+            buildConfigField("String", "CLIENT_ID", "$clientId")
+            buildConfigField("String", "CLIENT_EMAIL", "$clientEmail")
+            buildConfigField("String", "PRIVATE_KEY", "$privateKey")
+            buildConfigField("String", "PRIVATE_KEY_ID", "$privateKeyId")
         }
 
         release {
@@ -48,7 +57,11 @@ android {
         buildConfig = true
         viewBinding = true
     }
-
+    packaging {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+        }
+    }
 }
 
 dependencies {
@@ -82,6 +95,9 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     // Retrofit with Moshi Converter
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    // Google OAuth2 Authentication
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
 
     testImplementation("junit:junit:4.13.2")
 
