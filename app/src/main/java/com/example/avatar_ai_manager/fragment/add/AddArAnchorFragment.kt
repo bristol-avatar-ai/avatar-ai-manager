@@ -145,7 +145,7 @@ class AddArAnchorFragment : Fragment() {
     private fun loadAvatar() {
         // Define the avatar's model details
         val avatar = Model(
-            fileLocation = "models/robot_playground.glb",
+            fileLocation = "models/crystal.glb",
             placementMode = PlacementMode.DISABLED,
             scale = 0.8f
         )
