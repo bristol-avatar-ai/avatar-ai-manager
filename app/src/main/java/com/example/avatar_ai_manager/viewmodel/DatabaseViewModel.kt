@@ -137,8 +137,8 @@ class DatabaseViewModel(application: Application) : AndroidViewModel(application
         featureDao?.insert(feature)
     }
 
-    suspend fun updateFeature(name: String, description: String) {
-        featureDao?.update(name, description)
+    suspend fun updateFeature(name: String, anchorId: String, description: String) {
+        featureDao?.update(name, anchorId, description)
     }
 
     suspend fun deleteFeature(name: String) {

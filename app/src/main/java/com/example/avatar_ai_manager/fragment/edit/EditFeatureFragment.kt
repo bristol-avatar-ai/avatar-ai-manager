@@ -36,7 +36,7 @@ class EditFeatureFragment : FormFragment() {
     private val updateFeature: () -> Unit = {
         disableButtons()
         lifecycleScope.launch(Dispatchers.IO) {
-            databaseViewModel.updateFeature(args.featureName, featureDescription)
+            databaseViewModel.updateFeature(args.featureName, args.anchorId, featureDescription)
             checkIfPrimaryFeature()
 
             withContext(Dispatchers.Main) {
